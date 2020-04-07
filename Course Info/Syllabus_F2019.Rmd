@@ -1,0 +1,196 @@
+---
+title: "Stat 331/531: Statistical Computing with R"
+author: "Professor Kelly Bodwin"
+output: rmdformats::readthedown
+---
+## Contact
+
+#### Professor Kelly Bodwin
+
+**Office:** 25-106
+
+**Email:** kelly.bodwin+stat331@gmail.com
+
+
+### Course Forum:
+
+For questions of general interest, such as course clarifications or conceptual questions, please use [the class discussion forum](https://canvas.calpoly.edu/courses/9322/discussion_topics).  I encourage you to give your post an informative title, so that other people can find it.  For example, *"How do I color bars in a barplot with ggplot?"* is a better discussion title than *"help with plotting"*.
+
+While your posts are not anonymous, in this case there is no such thing as a bad question!
+
+
+### Drop-in Office Hours:
+
+#### Tuesday 12:10-2pm
+#### Thursday, 10:10-11am
+
+I will always be in my office during these times - please feel welcome to come by unannounced, for any reason at all!
+
+### Small Group Office Hours:
+
+#### Thursday, 12:10-2:00pm
+#### (and sometimes other bonus times!)
+
+These office hours are are organized in 15-minute segments, limited to 4 people in each.  This is to make sure that you are able to get your questions answered, even during busy periods when drop-in hours might be very full.
+
+Make an appointment at this link:  [https://calendly.com/kbodwin/small-group-office-hours](https://calendly.com/kbodwin/small-group-office-hours).
+
+Please treat these as open office hours - I will always be available at these times and happy to see you!  The appointment process is simply for crowd control.  Last-moment appointments are very welcome.
+
+
+## Course Info
+
+**Room:** 38-123A  (Statistics Studio Classroom)
+
+**Times:**
+
+Section 70: MW 12:10pm-2:00pm
+
+Section 71: MW 2:10am-4:00pm
+
+Section 72: MW 4:10am-6:00pm
+
+### Learning Objectives:
+
+This course will teach you the basics of R Statistical Software and of statistical computing principles.
+
+After taking this course, you will be able to:
+
+* Import, manage, and clean data from a wide variety of data sources.
+* Visualize and summarize data for informative exploratory data analysis and presentations.
+* Write efficient and well-documented R code.
+* Program random experiments and simulations from probability models
+* Extend your R skills independently through documentation and online resources.
+
+Additionally, it is my hope that you will learn to:
+
+* Contribute to and participate in the R Open Source Community.
+* Be thoughtful, deliberate, and ethical in your use of R and similar tools.
+* Use R to be playful, creative, and fun!
+
+
+
+### Textbook:
+
+There is no required textbook for this course - we will work with free online resources.  
+
+### Equipment
+
+Although you may always work on the Studio computers, I strongly recommend that you use your own personal laptop for this course if you have one.
+
+Chromebooks will **not** be sufficient to use **R**.
+
+
+## Grade Breakdown
+
+Your grade will consist of the following:
+
+- 5% Flex Points
+- 10% Practice Activities
+- 15% Homework Assignments
+- 15% Project I
+- 15% Midterm
+- 15% Project II
+- 25% Final Exam
+
+## Course Organization
+
+This class is organized into three distinct units.
+
+### Unit 1:  R for Data Science
+
+The first unit will focus on the R language itself.  You will become accustomed to the structure of programming in R, and learn to perform and present basic exploratory data analyses.  
+
+This unit will fairly closely follow Part I of [R for Data Science](https://r4ds.had.co.nz/) by Hadley Wickham.
+
+Unit 1 culminates in **Project I**, a group data exploration project.
+
+### Unit 2: Becoming an R Programmer
+
+The second unit will grow your ability to extend your R skills beyond the basics.  You will learn to work with unusual data types, to write your own functions, to program more efficiently and cleanly, and to teach yourself new packages.
+
+This unit will borrow from Parts II and I of [R for Data Science](https://r4ds.had.co.nz/), bits and pieces of [Advanced R](https://adv-r.hadley.nz/), and various other online resources.
+
+Unit 2 culminates in a **Midterm Exam**, which will be in-class and open-note.
+
+### Unit 3: Statistical Computing
+
+The final unit of the course will ask you to use your R abilities to implement various statistical computing tasks, such as simulation, bootstrapping, and Monte Carlo.  
+
+Unit 3 culminates in a **Final Exam**, which is non-cumulative, and **Project II**, a group project on learning new packages.
+
+
+
+## Flex Points
+
+There are endless opportunities to extend your R knowledge and/or your participation in the R and statistics community!  While I don't expect you to participate in all, or even most, of these opportunities - I ask that you try out a few.
+
+As such, **5% of your grade** comes from "Flex Points".  This is **not Extra Credit** - it is a portion of your grade!  However, it should be a very easy portion to achieve a perfect score in.
+
+Your Flex Points total will be taken out of 100 points at the end of the quarter.  A current list of Flex Point opportunities can be found here:  https://rstudio.csm.calpoly.edu/Stat_331-Flex_Points/.  
+
+
+Your Flex Points **must** be reported through [this Google Form](https://forms.gle/Yjn7NzhiY6YmrsXZA).
+
+I am always happy to entertain suggestions for further Flex Point ideas.  You may suggest these, or ask further questions, by emailing kelly.bodwin+stat331+flex@gmail.com.
+
+
+## Practice Activities
+
+Most classes, you will be given a Practice Activity to complete, to get the hang of the week's necessary R skills.  These activities will always result in a single, straightforward correct answer, that you will submit via the Canvas site.  Therefore, there is no reason you should not get full credit in this category!
+
+Since these activities are intended to be your first attempt at new skills, they are meant to be done with help from me and your peers.  Therefore, you will always be given some time in class to work on them.  I **strongly** suggest that you attempt to start the activities before class, so you can maximize the utility your in-class time.
+
+Practice Activities are due **before the following class period.**
+
+
+## Lab Assignments
+
+Your typical homework assignments will be weekly labs.  These labs are due on **Fridays at midnight**.  
+
+There are no extensions on lab assignments.  There is a grace period through **Sunday at midnight**, during which your late lab recieves a 10% grade deduction.  
+
+Labs turned in later than Sunday will not be reviewed, and instead will be quickly checked for completeness and recieve an automatic grade of 50%.
+
+
+### Dates
+
+**Midterm:** Wednesday, Febrary 19th
+
+**Final Exam:**
+
+* Section 70: Monday, March 16 10:10am – 1:00pm
+
+* Section 71: Friday, March 20 1:10pm – 4:00pm
+
+* Section 72: Wednesday, March 18 4:10pm – 7:00pm
+
+
+## Other Policies
+
+### Participation and Attendance
+
+I do not take formal attendance in this class.  However, it is my expectation that you remain in class and on task until you have finished all your activities and assignments.
+
+
+### Diversity and Inclusion
+
+It is my goal for everyone to feel safe and comfortable in my classroom. If there is any way
+I can make the course more welcoming for you, please do not hesitate to ask.
+
+In particular, if you have a disability, I will gladly work with you to make this class accessible.
+
+I encourage you to also contact the **Disability Resource Center** *(Building 124, Room 119
+or at 805-756-1395)*, who can help you register for extra accomodations such as extended
+exam time.
+
+### Cheating and Plagiarism.
+
+Simply put, I will not tolerate cheating. 
+
+Any incident of dishonesty, copying, exam cheating, or plagiarism will be reported to the Office of Student Rights and Responsibilities.
+
+Cheating will earn you a grade of 0 on the assignment and an overall grade penalty of at least 10%.
+
+For more information about what constitutes cheating and plagiarism, please see
+https://academicprograms.calpoly.edu/content/academicpolicies/Cheating.

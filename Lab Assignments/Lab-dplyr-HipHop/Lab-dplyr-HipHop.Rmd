@@ -1,0 +1,144 @@
+---
+title: "Lab 1: HipHop Lyrics"
+author: "Stat 331"
+output: rmdformats::readthedown
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
+                      echo=FALSE, warning=FALSE, message=FALSE,eval=FALSE)
+
+```
+
+# Instructions
+
+Please submit an HTML document created using R Markdown.
+
+* The first chunk of your R Markdown document should be to set the *global chunk options*.
+
+* The second chunk of your R Markdown document should be to *declare your libraries* (probably only `tidyverse` for now).
+
+* Make sure you address **all the questions** in these instructions.
+
+* Even if a question does not say "write code," **you should write code for your answer!**
+
+* I have provided hints about functions that might be useful to you.  You are **not required** to use these functions.
+
+* You may have to Google to solve some of these!
+
+* Be sure to **save** your work regularly (*Ctrl/Cmd+S* or *File > Save* or the floppy disk icon)
+
+* Be sure to **knit** your file every so often, to check for errors and make sure it looks nice.
+
+    + Check your R Markdown document for `View(dataset)` or `install.packages("package")`, both of these will prevent knitting.
+    
+    + Check your R Markdown document for moments when you looked at the data by typing the name of the data frame.  Leaving these in means the whole dataset will print out!
+    
+    + If all else fails, you can set your *chunk option* or *global option* to `error = TRUE`, which will allow the file to knit even if errors are present.
+
+
+# The dataset
+
+The data set "hiphop" contains results from a study conducted by a linguist at the University of Minnesota.  The researcher was interested in predicting musical taste based on familiarity with African American English (AAE).  168 subjects participated in the study, and each was asked to define 64 different AAE terms.  The definitions given were used to create a "familiarity" score for each subject for each term.  This score quantifies how well the subject knew the term on a scale of 1-5 (1 = not at all, 5 = very well).  Before tackling the problems, **study the information on the following website**, which includes a description of each variable:
+
+[http://conservancy.umn.edu/bitstream/handle/11299/116327/5/explanationAAEHiphopChesley.txt](http://conservancy.umn.edu/bitstream/handle/11299/116327/5/explanationAAEHiphopChesley.txt)
+
+
+
+Copy the following code to load the data.
+
+```{r, echo = TRUE}
+hiphop <- read_csv("https://www.dropbox.com/s/5d8fwxrj3jtua1z/hiphop.csv?dl=1")
+
+```
+
+# Introduction
+
+## 1. 
+
+Provide a brief overview (2-4 sentences) of the dataset. (It is always good practice to start an analysis by getting a feel for the data and providing a quick summary for readers.) You do **not** need to show any source code for this question, although you probably want to use code to get information.
+
+## 2. 
+
+Clean the dataset in whichever ways you see fit.
+
+## 3. 
+
+How many unique AAVE words were studied in this dataset?
+
+## 4. 
+
+Make a new variable that recategorizes `ethnic` into only two groups, "white" and "non-white", to simplify your data.
+
+Helpful functions: `mutate()`, `case_when()`
+
+
+## 5. 
+
+What are the demographics of the people in this study?  Investigate the variables `sex`, `age`, and `ethnic` and summarize your findings in 1-3 complete sentences.  
+
+Helpful functions:  `select()`, `unique()` or `distinct(, .keep_all = TRUE)`, `count()`,  `summary()`
+
+
+## 6. 
+
+Make at least two plots to display the demographic information of the subjects in this study.  You do not need to discuss these plots, but make sure they are appropriate to the data types and have informative titles and axis labels.
+
+Functions:  `ggplot()`, `geom_histogram()`, `geom_boxplot()`, `geom_bar()`, `ggtitle()`, `xlab()`, `ylab()`
+
+
+# Familiar words
+
+## 1.  
+
+For each demographic group listed below, determine which word(s) in this study was the most and least familiar on average.
+
+a. People below the age of 20
+b. Non-white women
+c. White men above the age of 30
+
+Helpful functions: `filter()`, `arrange()`, `desc()`, `top_n()`
+
+## 2. 
+
+For each demographic comparison below, determine which music genre most differentiates the groups.  That is, which genre had much higher average (mean or median) score in one group than the other.
+
+a. Male versus Female
+b. White versus Non-White
+c. Age below 21 versus age 21+
+
+Helpful functions: `group_by()`, `summarize_at()`, `distinct()`
+
+*Hint: Note that each subject in this dataset appears multiple times - once per word.  You might want to first create a new dataset where each person only appears once.*
+
+
+# Use the data
+
+A former Canadian child TV star named Aubrey Graham is interested in switching careers to become a rapper.  Aubrey hires you to consult the `hiphop` dataset to help compose his new songs. 
+
+*Note: There is no single right answer to these questions.  You will need to think about how you want to address the question, and do the appropriate variable adjustments and calculations to come up with a reasonable answer.*
+
+## 1.  
+
+Aubrey hopes that his songs will be percieved as authentically hiphop.  He hopes his lyrics will be recognizeable to those who describe themselves as hiphop fans, but less recognizeable to those who do not consider themselves fans.  Suggest some words or phrases that Aubrey should try to use, and some words he should avoid. 
+
+*Hint: Do not simply find the most popular words in each category.  Think about words that are very different between hiphop fans and nonfans.*
+
+
+## 2. 
+
+Although Aubrey wants to be authentic, he also hopes to sell records, of course.  Two titles have been suggested for his first album: "Hotline Boo" or "Hella Bling".  Based on the dataset, which will appeal more to the higher population areas?  Make at least one plot to support your answer.
+
+*Hint: Consider first converting the population variable(s) to categories, such as "large", "medium", and "small".  You may also want to use the "fam1" variable instead of "familiarity"*
+
+## 3. 
+
+Aubrey's true life dream is to collaborate with his fellow Canadian musician Justin Bieber.  Luckily, he knows that Bieber himself was one of the subjects in this study!  You know that Bieber is a white male, aged 17-23 at the time of the study, from a relatively small town (10,000-60,000 people) in Ontario.
+
+Determine which subject is secretly Bieber, and justify your answer.
+
+*Hint: Refer again to the dataset description.  There is another clue about Bieber's identity.*
+
+## 4. 
+
+Use the dataset to suggest a track listing (11 song titles) for Aubrey's next album with the Biebs.  Explain your thought process and corresponding code.

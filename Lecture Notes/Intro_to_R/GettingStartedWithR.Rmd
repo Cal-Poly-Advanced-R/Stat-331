@@ -1,0 +1,184 @@
+---
+title: "Intro to R"
+author: "Stat 331"
+resource_files:
+- appforthat.jpg
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    lib_dir: libs
+    nature:
+      countIncrementalSlides: no
+      highlightLines: yes
+      highlightStyle: github
+subtitle: Day 1
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(tidyverse)
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+solarized_light()
+```
+
+class: center, middle
+
+# What is R?
+
+---
+# What is R?
+
+**R** is a programming language designed originally for *statistical analyses*.
+
+--
+
+**R** was created by the **R Core Group** in 1997.
+
+(https://www.r-project.org/contributors.html)[https://www.r-project.org/contributors.html]
+
+--
+
+This group of 20-ish volunteers are the *only* people who can change the base (built-in) functionality of **R**.
+
+
+
+---
+# What is R?
+
+
+**R**'s **strengths** are...
+
+--
+
+... handling data with lots of **different types** of variables.
+
+--
+
+... making nice and complex data **visualizations**.
+
+--
+
+... having cutting-edge statistical **methods** available to users.
+
+---
+# What is R?
+
+
+**R**'s **weaknesses** are...
+
+--
+
+... performing non-analysis programming tasks. (*python*, *ruby*, ...)
+
+
+--
+
+... efficient numerical computation. (*matlab*, *C*, ...)
+
+--
+
+... not a simple tool for all audiences (*SPSS*, *SAS*(?), ...)
+
+---
+class: center, middle, invert
+
+# But wait!
+
+![](appforthat.jpg)
+
+---
+# Packages
+
+The heart and soul of **R** is **packages**.
+
+--
+
+These are "extra" sets of code that add new functionality to R when installed.
+
+--
+
+If it weren't for packages, we'd still be in 1997!
+
+---
+
+# Open-Source
+
+Importantly, **R** is *open-source*.
+
+--
+
+There is no company that owns **R**, like there is for SAS or Matlab.
+
+(Python is also open-source!)
+
+--
+
+This means nobody can sell their **R** code!
+
+--
+
+* (but you can sell "helpers" like **RStudio**)
+
+--
+
+* (and you can keep code **private** within an organization or company)
+
+--
+
+**Packages are created by users like you and me!**
+
+---
+# Open Source
+
+Being a good open-source citizen means...
+
+--
+
+... sharing your code publicly when possible. (GitHub!)
+
+--
+
+... contributing to public projects and packages, as you are able.
+
+--
+
+... creating your own packages, if you can.
+
+--
+
+... using **R** for ethical and respectful projects.
+
+---
+
+class: center, middle, invert
+
+# Let's try it!
+
+---
+class: center, middle
+
+# Try it: Plotting
+
+**If you are brand new to R:** 
+
+Find a partner and through this exercise:  https://rstudio.cloud/learn/primers/1.1
+
+**If you are familiar with R, but not ggplot:**
+
+Install and load the `ggplot2` package.
+
+Read [Chapter 3 of R for DS through 3.6.1](https://r4ds.had.co.nz/data-visualisation.html). (try code as you go!)
+
+**If you are already familiar with R and ggplot:**
+
+Skim Chapter 3 to make sure you are comfortable with everything.
+
+
+**When you are finished:** 
+
+You may leave OR work on Lab 0 OR do the reading assignment for Weds.
+
+

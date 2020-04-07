@@ -1,0 +1,12 @@
+name: stat_331-pa-review-cauchy
+title: STAT_331-PA-review-cauchy
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 95
+bundleId: 193
+url: https://rstudio.csm.calpoly.edu/content/95/
+when: 1583783984.0199
+asMultiple: FALSE
+asStatic: TRUE

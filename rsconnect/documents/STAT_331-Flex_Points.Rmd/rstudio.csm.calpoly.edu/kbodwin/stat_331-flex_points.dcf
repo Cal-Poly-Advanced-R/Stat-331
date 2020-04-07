@@ -1,0 +1,12 @@
+name: stat_331-flex_points
+title: STAT_331-Flex_Points
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 57
+bundleId: 132
+url: https://rstudio.csm.calpoly.edu/content/57/
+when: 1578328211.57533
+asMultiple: FALSE
+asStatic: TRUE

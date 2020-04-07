@@ -1,0 +1,300 @@
+---
+title: "Lab 5: Simulation"
+author: "Stat 331"
+output: rmdformats::readthedown
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=9, fig.height=6, fig.path='Figs/',
+                      echo=TRUE, warning=FALSE, message=FALSE)
+
+library(tidyverse)
+
+set.seed(369)
+```
+
+
+# The Central Limit Theorem
+
+Recall that the **Central Limit Theorem** tells us about the distribution of a sample mean, which is called the sampling distribution.  As sample size becomes large, the sampling distribution approaches a normal distribution, and the standard deviation of the sampling distribution decreases. 
+
+Let's take a look at what exactly all this means.
+
+**For this assignment, use a seed of 369.**
+
+## Part One:  The CLT
+
+1.  Suppose we have a quantity that we know is Normally distributed with mean 50 and standard deviation 10. Below, I have generated 1000 samples from this variable, and plotted the density.
+
+```{r, echo = TRUE}
+
+my_samples <- data.frame(
+  values = rnorm(1000, mean = 50, sd = 10)
+)
+
+ggplot(my_samples, aes(x = values)) + 
+  geom_histogram(aes(y = ..density..),
+                 fill = "white",
+                 color = "black") + 
+  geom_density(fill = "cornflowerblue", alpha = 0.5) + 
+  geom_vline(xintercept = mean(my_samples$values), color = "red", lwd = 2)
+
+```
+
+  +  What were the mean and standard deviation of the samples?
+  
+```{r}
+my_samples %>%
+  summarize(mean(values), sd(values))
+```
+  
+
+  +  Simulate a sample of size 30 from this population, and find the mean and standard deviation.  How do they compare to your answers above?
+  
+```{r}
+my_samples <- data.frame(
+  values = rnorm(30, mean = 50, sd = 10)
+)
+
+my_samples %>%
+  summarize(mean(values), sd(values))
+```
+
+```
+The mean and sd should be close to the same for both answers.
+```
+
+```
+The following is NOT correct:
+```
+```{r}
+sample(my_samples$values, 30)
+```
+
+
+
+2.  Repeat Question 1, this time for a variable that has an `exponential(0.02)` distribution.
+
+```{r}
+my_samples <- data.frame(
+  values = rexp(1000, rate = 0.02)
+)
+
+ggplot(my_samples, aes(x = values)) + 
+  geom_histogram(aes(y = ..density..),
+                 fill = "white",
+                 color = "black") + 
+  geom_density(fill = "cornflowerblue", alpha = 0.5) + 
+  geom_vline(xintercept = mean(my_samples$values), color = "red", lwd = 2)
+
+
+my_samples %>%
+  summarize(mean(values), sd(values))
+
+my_samples_30 <- data.frame(
+  values = rexp(30, rate = 0.02)
+)
+
+my_samples_30 %>%
+  summarize(mean(values), sd(values))
+
+```
+
+```
+The mean and sd should be close to the same for both answers.
+```
+
+
+3.  Still using the `exponential(0.02)`, simulate 1000 samples of size 30, and calculate the sample mean of each one.  Make a density plot of these *sample means*.
+
+```{r}
+many_samples <- replicate(1000, rexp(30, rate = 0.02), simplify = FALSE)
+
+my_sample_stats <- data.frame(
+  sample_means = map_dbl(many_samples, mean)
+)
+
+my_sample_stats %>%
+  ggplot(aes(x = sample_means)) + 
+  geom_histogram(aes(y = ..density..),
+                 fill = "white",
+                 color = "black") + 
+  geom_density(fill = "cornflowerblue", alpha = 0.5) 
+  
+```
+
+
+4.  Comment on your plot from (3).  How was the distribution of the sample means different from the distribution of the original variable?
+
+```
+Roughly normally distributed, not as skewed.
+```
+
+5. Find the standard deviation of your 1000 sample means.  How does it compare to the standard deviation of your single sample from 2(b)? *Hint: Divide the sd of the single sample by the sd of the sample means.  Then square that.*
+
+```{r}
+sd(my_samples$values)
+sd(my_sample_stats$sample_means)
+
+## (exact values will vary)
+
+(50/9.13)^2
+```
+
+```
+The variance of the sample means is the variance of the single samples divided by n.
+```
+
+## Part Two: Beyond the Mean
+
+The Central Limit Theorem works "like magic" when dealing with sample means.  But what about other statistics?
+
+Continue to study the `exponential(0.02)` distribution.
+
+1. The Median
+
+  + What is the true median of this distribution?
+  
+```{r}
+qexp(.5, 0.02)
+```
+
+```
+NOT CORRECT:
+```
+
+```{r}
+median(my_samples$values)
+```
+  
+
+  + Return to your 1000 samples of size 30.  Find the median of each sample.  Make a plot of the density of all the medians, with a vertical line representing the true median.
+  
+```{r}
+my_sample_stats <- my_sample_stats %>% 
+  mutate(
+    sample_medians = map_dbl(many_samples, median)
+  )
+
+my_sample_stats %>%
+  ggplot(aes(x = sample_medians)) + 
+  geom_histogram(aes(y = ..density..),
+                 fill = "white",
+                 color = "black") + 
+  geom_density(fill = "cornflowerblue", alpha = 0.5) + 
+  geom_vline(xintercept = qexp(.5, 0.02), color = "red", lwd = 2)
+```
+  
+
+  + Based on your plot above, do you think the CLT applies to the median of an exponential distribution?
+  
+```
+Comment on whether or not it looks Normally distributed around a center at the true value of the median.
+```
+  
+
+2. Repeat Q1, this time for the *midhinge* of each sample.  (You may have to google this!)
+
+```{r}
+mh <- (qexp(.75, 0.02) + qexp(.25, 0.02))/2
+mh
+```
+
+  
+```{r}
+midhinge <- function(sample) {
+  
+  q1 <- quantile(sample, .25)
+  q3 <- quantile(sample, .75)
+  
+  return((q1+q3)/2)
+  
+}
+
+
+my_sample_stats <- my_sample_stats %>% 
+  mutate(
+    sample_midhinges = map_dbl(many_samples, midhinge)
+  )
+
+my_sample_stats %>%
+  ggplot(aes(x = sample_midhinges)) + 
+  geom_histogram(aes(y = ..density..),
+                 fill = "white",
+                 color = "black") + 
+  geom_density(fill = "cornflowerblue", alpha = 0.5) + 
+  geom_vline(xintercept = mh, color = "red", lwd = 2)
+```
+  
+  
+```
+Comment on whether or not it looks Normally distributed around a center at the true value of the midhinge.
+```
+
+3. Repeat Q1, this time taking the *maximum* of each sample.  (There is no coding way to find the true maximum; make your best guess.)
+
+```{r}
+qexp(1, 0.02)
+```
+
+```
+There is no maximum!
+```
+  
+```{r}
+my_sample_stats <- my_sample_stats %>% 
+  mutate(
+    sample_maxes = map_dbl(many_samples, max)
+  )
+
+my_sample_stats %>%
+  ggplot(aes(x = sample_maxes)) + 
+  geom_histogram(aes(y = ..density..),
+                 fill = "white",
+                 color = "black") + 
+  geom_density(fill = "cornflowerblue", alpha = 0.5) 
+```
+  
+  
+```
+No!  Even if it looks a little bell-shaped, it can't possibly be centered at the true value (infinity).
+```
+
+
+## Part Three:  Appreciate the usefulness
+
+You have been told that the amount of time you have to wait for a bus from Cal Poly to Downtown SLO is `exponential(0.02)`.
+
+You think this might be a lie.  In the last 30 days, you have waited for the bus an average of 55 minutes.
+
+If the bus system is telling the truth about the `exponential(0.02)` distribution, how unlucky would you have to have been this month?
+
+Make an argument both by direct simulation, and by using the Central Limit Theorem.
+
+(*Hint: The mean of `exponential(0.02)` is `50`, and the sd is equal to the mean.*)
+
+#### Using simulation:
+
+We've already simulated 1000 samples of size 30 from this population!
+
+```{r}
+sum(my_sample_stats$sample_means > 55)/1000
+```
+
+
+#### Using CLT:
+
+The sample mean is approximately Normal, with a mean of 50 and a sd of 50/sqrt(30).
+
+```{r}
+pnorm(55, mean = 50, sd = 50/sqrt(30))
+```
+
+
+## Flex Points:
+
+Use Google or other resources to learn about the **Normal approximation to the Binomial distribution**.
+
+Write a very brief explanation of this phenomenon, that makes use of simulation and visualization to illustrate the concept.
+
+Upload your writeup **separately** to Canvas.

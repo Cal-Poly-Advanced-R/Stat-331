@@ -1,0 +1,28 @@
+
+50 Points: Lab is complete
+
+  In .R source file
+    - pluralize_gift
+    - make_phrase
+    - sing_line
+    - sing_song
+    
+  In .html file: 
+    - Song about college is printed out.
+    - If the formatting is odd (like one big block of text), that is fine.
+  
+  
+  
+50 Points:  Lab is correct
+
+  In .R file:  Each  of these mistakes is -5 if only done once, -10 if done more than once.
+    - There should be no direct references to "xmas" anywhere in the functions.
+    - There should be no direct references to the variables (Day, Day.in.Words, Gift.Item, Verb, Adjective, Location), except in the function sing_song.
+    - There should be no "print()" statements inside any of the functions.
+    
+    
+  In .html file:
+    - There should be no extra content; only the output of the function sing_song. (-5)
+    - The words should be correctly pluralized; the first line should say "email" not "emails", and the secnd line should say "points" not "point". (-5)
+    - The song should properly iterate.  Check that on the second day, you get an email AND two meal points, not just two meal points. (-10)
+    - We should not see "NULL" or "NA" printed out after the song print out.  If you see this, it means they used "print()" in the functions, so double check that if you didn't already take off those points.

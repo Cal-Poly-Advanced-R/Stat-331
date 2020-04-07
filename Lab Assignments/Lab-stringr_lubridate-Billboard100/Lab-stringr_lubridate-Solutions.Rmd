@@ -1,0 +1,191 @@
+---
+title: "Lab 4: Billboard Hot 100"
+author: "Stat 331"
+output: rmdformats::readthedown
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/', warning=FALSE, message=FALSE)
+```
+
+
+# Instructions
+
+* Please answer these questions using code.
+
+* The **only** R printouts should be the answers to the questions. Make sure your code does not display any extra information.
+
+* You do not need to write any text for this assignment; only code.
+
+* This time, you **will** be graded on your code style.
+
+# Introduction
+
+Today, we will study song popularity.  In the US, the Billboard Hot 100 is a list that comes out every week, showing the 100 most played songs that week.
+
+The following code will load a dataset of Billboard Hot 100 songs.  More information about the creation of this dataset, as well as some analyses by the author, can be found here: [https://mikekling.com/analyzing-the-billboard-hot-100/](https://mikekling.com/analyzing-the-billboard-hot-100/)  The dataset you are provided is a limited version of the full data, containing:
+- The title
+- The artist
+- The highest rank the song ever reached (1 is the best)
+- The number of weeks the song was on the chart
+- The latest date the song appeared on the Billboard Hot 100
+
+
+```{r}
+library(tidyverse)
+library(lubridate)
+
+```
+
+```{r, echo = TRUE}
+songs <- read.table("https://www.dropbox.com/s/jrwjthqo9b5o07g/billboard_songs.txt?dl=1", header = TRUE, stringsAsFactors = FALSE)
+```
+
+## Advice
+
+This is a very large dataset!  Consider using a function like `sample_n` to create a small dataset with only, say, 200 of the rows.  You can try all your code out on the smaller dataset first, and then only run the analysis of the full data after you have perfected everything.
+
+# Questions
+
+1) Do any data cleaning you need.
+
+*Hint: use `str_sub` to find the year, month, and day of the chart leaving date, then create a datetime object from these.*
+
+```{r}
+songs <- songs %>% 
+  mutate(
+    date = as.character(chart.date),
+    year = str_sub(date, 0, 4),
+    month = str_sub(date, 5, 6),
+    day = str_sub(date, 7, 8),
+    date = make_date(year =  year, month = month, day = day)
+  )
+
+```
+
+
+
+2) What 10 songs spent the longest on the charts?  Give only the title, artist, and weeks.
+
+```{r}
+songs %>% 
+  top_n(10, weeks.on.chart) %>%
+  arrange(desc(weeks.on.chart)) %>%
+  select(title, artist, weeks.on.chart)
+```
+
+
+3) What date did the oldest song(s) in this dataset leave the charts? Give only the date.
+
+```{r}
+songs %>% 
+  top_n(1, desc(date)) %>%
+  distinct(date)
+```
+
+
+
+4) What songs could have been played at your 16th birthday party?  That is, which songs that eventually peaked at #1  **entered** the charts within a couple months (before or after) your 16th birthday?  Give only the song title, artist, and date of chart entry.
+
+
+
+```{r}
+my_bday <- mdy("April 2, 2005")
+
+songs %>% 
+  mutate(
+      entry_date = date - weeks(weeks.on.chart)
+  ) %>%
+  filter(overall.peak == 1 & entry_date %within% interval(my_bday - months(2), my_bday + months(2))) %>%
+  select(title, artist, entry_date)
+  
+```
+
+
+5) What is the most common word, at least 4 letters long, used in the title of any song?  Give only the word itself, and its count.
+
+```{r}
+titles <- songs %>% 
+  pull(title) 
+
+four_char_words <- titles %>%
+  str_extract_all("[:alpha:]{4,}") %>%
+  unlist()
+
+four_char_words %>%
+  table() %>%
+  sort() %>%
+  rev() %>%
+  head(1)
+```
+
+
+6) Which five artists were the most successful in terms of:
+
+    a) Number of songs that were #1 hits
+    b) Total weeks any of their songs spent on the chart.
+
+*For this question, you may ignore collaborations; i.e., "Ariana Grande" is considered a different artist from "Jessie J, Ariana Grande & Nicki Minaj"*
+
+*Hint: the function `n()` might help you summarize.*
+
+```{r}
+songs %>% 
+  filter(overall.peak == 1) %>%
+  group_by(artist) %>%
+  summarize(num_songs = n()) %>%
+  top_n(5, num_songs)
+
+songs %>% 
+  group_by(artist) %>%
+  summarize(tot_weeks = sum(weeks.on.chart)) %>%
+  top_n(5, tot_weeks)
+```
+
+7) Let's take a look at artists who work together on songs.
+    a) Which artist has **featured** on the most Billboard charting songs?  
+    b) Which artist has **collaborated** on the most Billboard charting songs?
+
+Definitions:
+```
+RAE SREMMURD featuring NICKI MINAJ & YOUNG THUG
+```
+In this string, Nicki Minaj and Young Thug are considered to be **featured**.
+```
+JESSIE J, ARIANA GRANDE & NICKI MINAJ
+```
+In this string, Jessie J and Ariana Grande and Nicki Minaj are all considered to have **collaborated** on the song.
+
+```{r}
+artist_creds <- songs %>% pull(artist)
+
+feat_artists <- artist_creds %>% 
+  str_subset("featuring") %>% 
+  str_replace_all(".* featuring", "") %>%
+  str_split("([&,])|( or )|( and )") %>%
+  #str_extract_all("[^,&]+") %>%
+  unlist() %>%
+  str_trim(side = "both")
+  
+  
+feat_artists %>% 
+  table() %>%
+  sort() %>%
+  rev() %>%
+  head(1)
+
+collab_artists <- artist_creds %>%
+  str_replace_all("featuring .*", "") %>%
+  str_extract_all("[^,&]+") %>%
+  unlist() %>%
+  str_trim(side = "both")
+
+collab_artists %>% 
+  table() %>%
+  sort() %>%
+  rev() %>%
+  head(1)
+  
+```
+
+

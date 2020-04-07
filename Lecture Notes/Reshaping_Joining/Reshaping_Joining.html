@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Reshaping and Joining</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Stat 331" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Reshaping and Joining
+### Stat 331
+
+---
+
+
+
+
+
+
+class: center, middle
+# Setup
+
+Find your R Markdown file in which you explored the `cereals` data.
+
+(This was probably called `Practice.Rmd`.)
+---
+class:center,middle,invert
+# Reshaping
+---
+# Reshaping
+
+* Note that the `cereals` dataset has separate columns for each nutritional item (`calories`, `sugar`, etc.)
+
+* What if we want to make a plot comparing some of these measures?
+
+
+```r
+ggplot(cereals, aes(x = ...????))
+```
+---
+# Tidy Data
+
+![](https://d33wubrfki0l68.cloudfront.net/6f1ddb544fc5c69a2478e444ab8112fb0eea23f8/91adc/images/tidy-1.png)
+---
+
+# Pivoting longer
+
+What if we want to make boxplots comparing the different iris parts?
+
+
+
+```r
+ggplot(iris, aes(x = Flower.Part, y = Size)) +
+  geom_boxplot()
+```
+
+```
+## Error in FUN(X[[i]], ...): object 'Flower.Part' not found
+```
+
+![](Reshaping_Joining_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+
+---
+
+# Pivoting longer
+
+What if we want to make boxplots comparing the different iris parts?
+
+
+
+```r
+head(iris)
+```
+
+```
+##   Sepal.Length Sepal.Width Petal.Length Petal.Width Species
+## 1          5.1         3.5          1.4         0.2  setosa
+## 2          4.9         3.0          1.4         0.2  setosa
+## 3          4.7         3.2          1.3         0.2  setosa
+## 4          4.6         3.1          1.5         0.2  setosa
+## 5          5.0         3.6          1.4         0.2  setosa
+## 6          5.4         3.9          1.7         0.4  setosa
+```
+
+---
+# Pivoting longer
+
+
+```r
+iris %&gt;%
+  pivot_longer(Sepal.Length:Petal.Width, 
+               names_to = "Flower.Part", 
+               values_to = "Size")
+```
+
+```
+## # A tibble: 600 x 3
+##    Species Flower.Part   Size
+##    &lt;fct&gt;   &lt;chr&gt;        &lt;dbl&gt;
+##  1 setosa  Sepal.Length   5.1
+##  2 setosa  Sepal.Width    3.5
+##  3 setosa  Petal.Length   1.4
+##  4 setosa  Petal.Width    0.2
+##  5 setosa  Sepal.Length   4.9
+##  6 setosa  Sepal.Width    3  
+##  7 setosa  Petal.Length   1.4
+##  8 setosa  Petal.Width    0.2
+##  9 setosa  Sepal.Length   4.7
+## 10 setosa  Sepal.Width    3.2
+## # … with 590 more rows
+```
+
+---
+# Pivoting longer
+
+
+```r
+iris %&gt;%
+  pivot_longer(Sepal.Length:Petal.Width, 
+               names_to = "Flower.Part", 
+               values_to = "Size") %&gt;%
+  ggplot(aes(x = Flower.Part, y = Size)) +
+  geom_boxplot()
+```
+
+![](Reshaping_Joining_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+
+
+---
+class: middle
+# Alert:
+## `pivot_longer()` is a new function name!
+## It used to be called `gather()`
+## `gather()` will still work, but I suggest you run `update.packages("tidyr")`
+---
+# Try it!
+
+Create a new dataset called `cereals_3`, that has three columns:
+* The name of the cereal
+* A column called "Nutrient" with values `protein`, `fat`, or `fiber`.
+* A column called "Amount" with the corresponding amount of the nutrient.
+
+---
+# Pivoting wider
+
+What about the reverse reshaping?
+
+
+```
+## Warning: Values in `Sepal.Width` are not uniquely identified; output will contain list-cols.
+## * Use `values_fn = list(Sepal.Width = list)` to suppress this warning.
+## * Use `values_fn = list(Sepal.Width = length)` to identify where the duplicates arise
+## * Use `values_fn = list(Sepal.Width = summary_fun)` to summarise duplicates
+```
+
+```
+## # A tibble: 145 x 6
+##    Sepal.Length Petal.Length Petal.Width      setosa  versicolor   virginica
+##           &lt;dbl&gt;        &lt;dbl&gt;       &lt;dbl&gt; &lt;list&lt;dbl&gt;&gt; &lt;list&lt;dbl&gt;&gt; &lt;list&lt;dbl&gt;&gt;
+##  1          5.1          1.4         0.2         [1]         [0]         [0]
+##  2          4.9          1.4         0.2         [1]         [0]         [0]
+##  3          4.7          1.3         0.2         [1]         [0]         [0]
+##  4          4.6          1.5         0.2         [1]         [0]         [0]
+##  5          5            1.4         0.2         [2]         [0]         [0]
+##  6          5.4          1.7         0.4         [1]         [0]         [0]
+##  7          4.6          1.4         0.3         [1]         [0]         [0]
+##  8          5            1.5         0.2         [1]         [0]         [0]
+##  9          4.4          1.4         0.2         [1]         [0]         [0]
+## 10          4.9          1.5         0.1         [1]         [0]         [0]
+## # … with 135 more rows
+```
+---
+# Pivoting wider
+
+Need IDs to pivot wide!
+
+
+```
+## # A tibble: 150 x 4
+##    Flower.ID setosa versicolor virginica
+##        &lt;int&gt;  &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
+##  1         1    3.5         NA        NA
+##  2         2    3           NA        NA
+##  3         3    3.2         NA        NA
+##  4         4    3.1         NA        NA
+##  5         5    3.6         NA        NA
+##  6         6    3.9         NA        NA
+##  7         7    3.4         NA        NA
+##  8         8    3.4         NA        NA
+##  9         9    2.9         NA        NA
+## 10        10    3.1         NA        NA
+## # … with 140 more rows
+```
+---
+# Try it!
+
+Cereals in this dataset are placed on shelf 1, 2, or 3.  We would like to know if these cereal placements correspond to different nutritional values.
+
+Create a new dataset called `cereals_4`, that has four columns:
+* The name of the manufacturer
+* The mean amount of sugar in cereals on shelf 1.
+* The mean amount of sugar in cereals on shelf 2.
+* The mean amount of sugar in cereals on shelf 3.
+
+*Hint: You will need to `group_by` and `summarize` first!`
+
+---
+class: center, middle
+# Joining data
+---
+# Joins
+
+Consider the following three datasets:
+
+
+```r
+data1 &lt;- data.frame(
+  professor = c("Bodwin", "Glanz", "Carlton", "Sun"),
+  undergrad_school = c("Harvard", "Cal Poly", "Cal Poly", "Harvard"),
+  grad_school = c("UNC", "Boston University", "UCLA", "Stanford")
+)
+
+data2 &lt;- data.frame(
+  professor = c("Bodwin", "Glanz", "Carlton"),
+  Stat_331 = c(TRUE, TRUE, TRUE),
+  Stat_330 = c(FALSE, TRUE, TRUE),
+  Stat_431 = c(TRUE, TRUE, FALSE)
+)
+
+data3 &lt;- data.frame(
+  course = c("Stat_331", "Stat_330", "Stat_431"),
+  num_sections = c(8, 3, 1)
+)
+```
+
+---
+# Joining
+
+
+```r
+data1
+```
+
+```
+##   professor undergrad_school       grad_school
+## 1    Bodwin          Harvard               UNC
+## 2     Glanz         Cal Poly Boston University
+## 3   Carlton         Cal Poly              UCLA
+## 4       Sun          Harvard          Stanford
+```
+
+```r
+data2
+```
+
+```
+##   professor Stat_331 Stat_330 Stat_431
+## 1    Bodwin     TRUE    FALSE     TRUE
+## 2     Glanz     TRUE     TRUE     TRUE
+## 3   Carlton     TRUE     TRUE    FALSE
+```
+
+```r
+data3
+```
+
+```
+##     course num_sections
+## 1 Stat_331            8
+## 2 Stat_330            3
+## 3 Stat_431            1
+```
+
+---
+# Joining
+
+Combine datasets 1 and 2 to make this:
+
+
+```
+## Joining, by = "professor"
+```
+
+```
+## Warning: Column `professor` joining factors with different levels, coercing to
+## character vector
+```
+
+```
+##   professor undergrad_school       grad_school Stat_331 Stat_330 Stat_431
+## 1    Bodwin          Harvard               UNC     TRUE    FALSE     TRUE
+## 2     Glanz         Cal Poly Boston University     TRUE     TRUE     TRUE
+## 3   Carlton         Cal Poly              UCLA     TRUE     TRUE    FALSE
+## 4       Sun          Harvard          Stanford       NA       NA       NA
+```
+
+---
+# Joining
+
+Combine datasets 1 and 2 to make this:
+
+
+```
+## Joining, by = "professor"
+```
+
+```
+## Warning: Column `professor` joining factors with different levels, coercing to
+## character vector
+```
+
+```
+##   professor undergrad_school       grad_school Stat_331 Stat_330 Stat_431
+## 1    Bodwin          Harvard               UNC     TRUE    FALSE     TRUE
+## 2     Glanz         Cal Poly Boston University     TRUE     TRUE     TRUE
+## 3   Carlton         Cal Poly              UCLA     TRUE     TRUE    FALSE
+```
+---
+# Joining
+
+Combine datasets 2 and 3 to make this:
+
+
+```
+## Joining, by = "course"
+```
+
+```
+## Warning: Column `course` joining character vector and factor, coercing into
+## character vector
+```
+
+```
+## # A tibble: 9 x 4
+##   professor course   can_teach num_sections
+##   &lt;fct&gt;     &lt;chr&gt;    &lt;lgl&gt;            &lt;dbl&gt;
+## 1 Bodwin    Stat_331 TRUE                 8
+## 2 Bodwin    Stat_330 FALSE                3
+## 3 Bodwin    Stat_431 TRUE                 1
+## 4 Glanz     Stat_331 TRUE                 8
+## 5 Glanz     Stat_330 TRUE                 3
+## 6 Glanz     Stat_431 TRUE                 1
+## 7 Carlton   Stat_331 TRUE                 8
+## 8 Carlton   Stat_330 TRUE                 3
+## 9 Carlton   Stat_431 FALSE                1
+```
+
+---
+# Joining
+
+We would like to assign teachers for next year, with the following guidelines:
+
+1. Each professor should be given 4 sections.
+
+2. At least half of all 331 sections should be taught by Cal Poly graduates.
+
+3. More than half of all 330 sections should be taught by UCLA graduates.
+
+4. Each professor should teach at least 2 different classes.
+
+**PA 4: How many sections of Stat 331 will Dr. Glanz teach?**
+---
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

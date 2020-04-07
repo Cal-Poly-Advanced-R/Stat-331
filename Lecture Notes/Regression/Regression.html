@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Regression</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Stat 331" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Regression
+### Stat 331
+
+---
+
+
+
+
+
+
+class: center, middle, inverse
+
+# Introduction
+
+Today we will learn about **linear models**, by studying the popularity of names over time.
+
+---
+class: center, middle
+
+# Linear models
+
+---
+# Linear models
+
+Consider the following mystery data, `x` and `y`.
+We would like to know if these two variables are related.
+
+
+```r
+ggplot(sim1, aes(x, y)) + 
+  geom_point()
+```
+
+![](Regression_files/figure-html/unnamed-chunk-1-1.png)&lt;!-- --&gt;
+
+---
+# Linear models
+
+We could "guess" at a line through the points...
+
+... but is this the **best** line???
+
+
+
+```r
+ggplot(sim1, aes(x, y)) + 
+  geom_point() +
+  geom_abline(slope = 1.5, intercept = 7, color = "grey")
+```
+
+![](Regression_files/figure-html/unnamed-chunk-2-1.png)&lt;!-- --&gt;
+---
+# Linear models
+
+There are so many possible lines!
+
+![](Regression_files/figure-html/unnamed-chunk-3-1.png)&lt;!-- --&gt;
+---
+# Linear Models
+
+For a particular line, how much do we "miss" our data points by?
+*(We can never hit all of them with one straight line!)*
+
+![](Regression_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
+
+---
+# Linear Models
+
+The **best** model is the one with the smallest **sum of squared residuals**.
+
+**R** can calculate this for us:
+
+
+```r
+sim1_mod &lt;- lm(y ~ x, data = sim1)
+coef(sim1_mod)
+```
+
+```
+## (Intercept)           x 
+##    4.220822    2.051533
+```
+
+--
+
+The object `y ~ x` is a **formula**.  It takes the form "Response Variable ~ Explanatory Variable(s)"
+
+--
+
+The function `lm` is **not pipe friendly!**
+
+---
+# Best linear model
+
+
+```r
+ggplot(sim1, aes(x, y)) + 
+  geom_point() +
+  geom_abline(slope = 2.05, intercept = 4.22, color = "grey")
+```
+
+![](Regression_files/figure-html/unnamed-chunk-6-1.png)&lt;!-- --&gt;
+
+---
+# Best linear model
+
+Make **R** plot the model for you!
+
+
+```r
+ggplot(sim1, aes(x, y)) + 
+  geom_point() +
+  stat_smooth(method = "lm")
+```
+
+![](Regression_files/figure-html/unnamed-chunk-7-1.png)&lt;!-- --&gt;
+---
+# Model significance
+
+
+```r
+summary(sim1_mod)
+```
+
+```
+## 
+## Call:
+## lm(formula = y ~ x, data = sim1)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.1469 -1.5197  0.1331  1.4670  4.6516 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   4.2208     0.8688   4.858 4.09e-05 ***
+## x             2.0515     0.1400  14.651 1.17e-14 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.203 on 28 degrees of freedom
+## Multiple R-squared:  0.8846,	Adjusted R-squared:  0.8805 
+## F-statistic: 214.7 on 1 and 28 DF,  p-value: 1.173e-14
+```
+---
+# Model significance
+
+The variable `x` explains **88.05%** of the variance in the variable `y`.
+
+The slope of **2.05** is significantly different from 0  (t = **12.65**, p &lt; 0.0001)
+
+The model is significant.  (F = **214.7**, p &lt; 0.0001)
+
+---
+# Broom
+
+The package `broom` is nice for getting model output more conveniently:
+
+
+```r
+library(broom)
+```
+
+```
+## 
+## Attaching package: 'broom'
+```
+
+```
+## The following object is masked from 'package:modelr':
+## 
+##     bootstrap
+```
+
+```r
+sim1_results &lt;- tidy(sim1_mod)
+
+sim1_results
+```
+
+```
+## # A tibble: 2 x 5
+##   term        estimate std.error statistic  p.value
+##   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)     4.22     0.869      4.86 4.09e- 5
+## 2 x               2.05     0.140     14.7  1.17e-14
+```
+
+---
+# Broom
+
+In R markdown: (replace quotes with tick marks)
+
+```
+The slope is "r sim1_results$estimate[2]" and 
+the intercept is "r sim1_results$estimate[1]"
+```
+
+Gives: 
+
+The slope is 2.0515331 and the intercept is 4.2208219
+
+---
+
+class: center, middle, inverse
+
+# An example analysis
+
+---
+
+# The Data
+
+* Baby names in California from 1940-2016.  
+
+* Only names with at least 50 recorded babies that year.
+
+* Information recorded:
+    - the year
+    - how many babies had that name
+    - gender assigned at birth
+    
+---
+# Just Kellys
+
+For now, we will study only the name "Kelly":
+
+
+
+
+```
+## # A tibble: 6 x 6
+##     row State Gender  Year Name  Count
+##   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;  &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;
+## 1     1 CA    F       1941 Kelly     6
+## 2     2 CA    F       1943 Kelly     5
+## 3     3 CA    F       1944 Kelly     7
+## 4     4 CA    F       1945 Kelly     6
+## 5     5 CA    F       1946 Kelly     7
+## 6     6 CA    F       1947 Kelly     8
+```
+
+
+---
+
+# Trend in Kellys over time
+
+Let's take a look at how the name "Kelly" has changed over time.  
+
+![](Regression_files/figure-html/plot-1.png)&lt;!-- --&gt;
+
+Hmmm, interesting.  There seems to be a spike at 1957.  I wonder why that is.
+
+---
+# By gender
+
+These days, you don't see many male Kellys.  Lets track gender as well in our plot
+
+![](Regression_files/figure-html/plot2-1.png)&lt;!-- --&gt;
+
+Why did the name Kelly suddenly get popular as a girl's name around 1957?  Why did it spike again around 1978?  
+---
+# Is my name not cool any more?
+
+I was born in 1989.  Let's look at only babies in the time frame since I was named.
+
+
+
+---
+# A linear model
+
+We will create a linear model with the year as the explanatory variable, and the number of Kellys as the response.
+
+$$
+Y = X + \epsilon
+$$
+
+$$
+(\text{Number of Kellys}) = (\text{Year}) + (\text{Random Noise})
+$$
+
+---
+# A linear model
+
+
+```
+## 
+## Call:
+## lm(formula = Count ~ Year, data = kellys_89)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -375.65 -215.99   25.59  190.14  488.55 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 32665.493   8034.043   4.066 0.000157 ***
+## Year          -16.193      4.012  -4.036 0.000172 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 242.5 on 54 degrees of freedom
+## Multiple R-squared:  0.2318,	Adjusted R-squared:  0.2175 
+## F-statistic: 16.29 on 1 and 54 DF,  p-value: 0.0001724
+```
+
+
+It does seem that the name Kelly has decreased significantly in popularity over time.  Bummer.
+
+---
+# Linear model
+
+Let's plot this linear model.
+
+![](Regression_files/figure-html/plot3-1.png)&lt;!-- --&gt;
+
+---
+# Residuals
+
+We should also check out the *residuals*.  Although there are some automatic ways to do this, we'll do it by hand for practice.
+
+
+```r
+kellys_89 &lt;- kellys_89 %&gt;%
+  add_predictions(my_model) %&gt;%
+  mutate(
+    residual = Count - pred
+  )
+
+ggplot(kellys_89, aes(x = Year, y = residual)) + geom_point()
+```
+
+![](Regression_files/figure-html/residuals-1.png)&lt;!-- --&gt;
+
+**Nope - residuals are terrible!  This is because we didn't account for gender.**
+
+---
+# Gender
+
+What about by gender?
+
+![](Regression_files/figure-html/gender model-1.png)&lt;!-- --&gt;
+
+---
+# New residuals
+
+![](Regression_files/figure-html/unnamed-chunk-12-1.png)&lt;!-- --&gt;
+
+---
+# Conclusion
+
+
+```
+## # A tibble: 4 x 5
+##   term         estimate std.error statistic  p.value
+##   &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)   60455.   1738.         34.8 1.11e-37
+## 2 Year            -30.0     0.868     -34.5 1.60e-37
+## 3 GenderM      -55580.   2458.        -22.6 1.45e-28
+## 4 Year:GenderM     27.5     1.23       22.4 2.07e-28
+```
+
+
+We conclude that the name "Kelly" is decreasing by about 30 babies per year for women, and about 2.5 babies per year for men.  Overall, there are more female Kellys than male Kellys.
+
+Based on the residuals, a linear model is probably reasonable for the decrease in female Kellys, but not so much for the male Kellys, since the blue points follow somewhat of a curved "smile" pattern.
+
+---
+class: center, middle, invert
+
+# PA 10
+
+Replicate this analysis for a name of your choice.
+
+Use the template "Baby_Names.Rmd" to help you.  However, this template has many errors that you will need to correct!
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

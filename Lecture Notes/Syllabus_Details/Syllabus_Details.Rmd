@@ -1,0 +1,277 @@
+---
+title: "Syllabus (yawn)"
+subtitle: "Day 1"  
+author: "Stat 331"
+
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(tidyverse)
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+solarized_light()
+```
+
+class: center, middle
+
+# Welcome to Stat 331!
+
+(crashers, please leave the computer seats for enrolled students)
+
+---
+
+# Why you are here
+
+* You are a Stat major?
+
+* You are a Stat minor or a Data Science minor?
+
+* You want to use **R** in your research?
+
+* You think **R** will be useful for your job?
+
+--
+
+**Everyone is welcome - and everyone will have different strengths and weaknesses.**
+
+--
+
+**Make some friends!**
+
+(exchange emails/phonenumber/instachat/snapgram/whatever the kids use)
+---
+class: center, middle
+
+# What to expect
+
+---
+
+class: center, middle, invert
+
+# Unit 1: R for Data Science
+
+### Weeks 1-3
+
+* basics of R programming
+
+* visualization
+
+* exploratory analysis
+
+* making things pretty in RStudio
+
+---
+
+class: center, middle, invert
+
+# Week 4: A weird one
+
+In week 4, I will be at the annual RStudio Conference in San Francisco.
+
+In lieu of class, you will be asked to do several things:
+
+* Attend a special Watch Party for the conference on **Jan. 29th at 8am.**, if you can.
+
+* Watch at least two of the RStudio Conference talks online.
+
+* Complete several small assignments that will help you learn to teach yourself code from online resources.
+
+* Complete **Project I**, a group data exploration project.
+
+---
+class: center, middle, invert
+
+# Unit 2: Becoming an R Programmer
+
+### Weeks 5-7
+
+In the second unit, you will learn:
+
+* responsible code styling and workflow
+
+* working with complicated data types
+
+* writing and documenting your own functions
+
+* iteration and functional programming
+
+---
+class: center, middle
+
+# Midterm Exam
+
+## Weds, Feb 19
+
+(In-class)
+
+(Open-note, open-internet.)
+
+(Use your own computer if you want.)
+
+---
+class: center, middle, invert
+
+# Unit 3: Statistical Computing
+
+In the third unit, we will learn to:
+
+* Implement statistical models
+
+* Simulate data from probability distributions
+
+* Create bootstrap confidence intervals
+
+* Estimate parameters via Monte Carlo methods.
+--
+
+Non-majors:  This may be the unit you find difficult!  Let me know if you would like extra stat resources at this stage.
+
+---
+class: center, middle
+
+# Final Exam
+
+## (See registar's calendar)
+
+Non-cumulative:  you will be asked to perform statistical computing tasks.
+
+---
+class: center, middle
+
+# Project
+
+## Alone, or in group of your choice
+
+You will create a *vignette* and a *Shiny app* to introduce us to a new R package.
+
+More on this later. :)
+---
+# Flex Points
+
+**Flex Points** are extra tasks and challenges to enhance your learning.
+
+See the list at: https://rstudio.csm.calpoly.edu/Stat_331-Flex_Points/
+
+--
+
+** FLEX POINTS ARE NOT EXTRA CREDIT!!! **
+
+--
+
+Advice from Stat 150:  Start early!
+
+---
+# Practice Activities
+
+* Assigned (almost) every class.
+
+* Due by the next class.
+
+* Meant to be done with help - you may encounter things you haven't learned!
+
+* Submit answers on Canvas.  Infinite tries - you should get 100%!
+
+--
+
+* I suggest you try them *before* class, when possible.
+
+* You will have in-class time to work on them.
+
+* Work together!
+
+---
+# Lab Assignments
+
+* Due **Friday at midnight** each week.
+
+* (except Project and Exam weeks)
+
+* "Ordinary" homework tasks involving data analysis
+
+* Working together is fine, but **do not** copy paste code or answers!!!
+
+--
+
+* Turned in by **Sunday at midnight** = -10%
+
+* Turned in after that = not graded, given 50%.
+
+---
+# Attendance
+
+![](https://media0.giphy.com/media/xT77Y8eeEhBA8NQwLK/giphy.gif)
+
+I don't take formal attendance.
+
+--
+
+However, I expect you to remain in class and working as long as you still have work left to complete.
+
+(I don't want to answer questions outside of class that could have been addressed in-class.)
+
+---
+# Diversity and Inclusion
+
+* I take it very seriously.
+
+--
+
+* Please let me know if I can be better!
+
+* In particular, if you have a disability, I will gladly work with you to make this class accessible.
+
+--
+
+* Register with the **Disability Resource Center** *(Building 124, Room 119
+or at 805-756-1395)* for extra accomodations.
+
+* Probably easiest to take exams here - talk to me about this.
+
+---
+# Cheating and Plagiarism
+
+![](https://media.giphy.com/media/e133xiIgUYd0I/giphy.gif)
+
+---
+# Cheating and Plagiarism
+
+* Never, ever copy-paste someone else's code and turn it in.
+
+* (It is okay to copy-paste your own!)
+
+* (It is okay to copy-paste and then edit.)
+
+* (It is okay to copy-paste when you are practicing.)
+
+--
+
+* Cheating will earn you a grade of 0 on the assignment and an overall grade penalty of at least 10%.
+
+--
+
+* And I will be very upset. :(
+
+---
+# Contacting me
+
+* **Email me:**  kelly.bodwin+stat331@gmail.com
+
+* **Drop in:**  Tuesday 12:10-2pm, Thursday, 10:10-11am
+
+* **Scheduled OH**:  [https://calendly.com/kbodwin/small-group-office-hours](https://calendly.com/kbodwin/small-group-office-hours)
+
+* Use the **class forum** for questions.
+
+* Follow me on twitter: @KellyBodwin
+

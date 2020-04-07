@@ -1,0 +1,415 @@
+---
+title: "Base R, and other stories"
+author: "Stat 331"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(tidyverse)
+library(flair)
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+solarized_light()
+```
+
+```{css, echo = FALSE}
+img {
+  height: 400px;
+}
+
+```
+
+---
+
+class: center, middle
+# Base R
+## What's under the hood
+
+---
+
+![](bass.gif)
+
+---
+class: center, middle, inverse
+
+## "But Dr. B., you love the tidyverse!!!"
+
+---
+# Reasons to be fluent in Base R
+
+1. The `tidyverse` doesn't replace *everything* in R.
+
+--
+
+```{r, eval = FALSE}
+2 + 2
+
+2 %>% plus(2)
+
+```
+
+--
+
+The `tidyverse` is designed to make **Data Science** easier, not necessarily all computing tasks.
+
+---
+# Reasons to be fluent in Base R
+
+1. The `tidyverse` doesn't replace *everything* in R.
+
+--
+
+2. If you build your own tools, you will probably build them in Base.
+    + Fewer *dependencies*
+    + More "under the hood" programming.
+    + It's generally a bit faster.
+    
+--
+
+3. You will probably see it in other people's code.
+    + You want to be able to work with them.
+    + (or help them see the light...)
+    
+---
+class: center, middle, inverse
+
+# A few Basics of Base
+
+---
+# Subsetting
+
+**Tidy:** "Slice the dataset down to the second row."
+```{r}
+iris %>%
+  slice(2)
+```
+
+---
+# Subsetting
+
+**Base:** "Give me the 2nd row, and all the columns."
+
+```{r}
+iris[2,]
+```
+
+
+---
+# Conditional Subsetting
+
+**Tidy:** "Filter by this condition."
+```{r}
+iris %>%
+  filter(Species == "setosa")
+```
+
+---
+# Conditional Subsetting
+
+**Base:** "Find the rows where the condition is true; then "
+```{r subset}
+is_setosa <- iris$Species == "setosa"
+
+iris[is_setosa, ]
+```
+
+---
+# Conditional Subsetting
+
+```{r, echo = FALSE}
+decorate("subset") %>% flair(", ]") %>% flair("iris$")
+```
+
+---
+# Conditional Subsetting
+
+Once you get used to this approach...
+
+```{r subset2, include = FALSE}
+iris[iris$Species == "setosa", ]
+```
+
+```{r, echo = FALSE}
+decorate("subset2") %>% flair('iris$Species == "setosa"')
+```
+
+---
+
+# The subset function
+
+A very handy shortcut to base subsetting:
+
+```{r}
+subset(iris, Species == "setosa")
+```
+
+---
+# The subset function
+
+A very handy shortcut to base subsetting:
+
+```{r}
+subset(iris, Species == "setosa", select = Petal.Length)
+```
+
+---
+
+class: center, middle, inverse
+
+# Probably my least favorite thing about R...
+
+---
+
+# Selecting columns
+
+What type of object does this output?
+
+```{r, eval = FALSE}
+iris %>%
+  select(Petal.Length)
+```
+
+--
+
+How about this?
+
+
+```{r, eval = FALSE}
+iris[, "Petal.Length"]
+```
+
+---
+# Selecting columns
+
+If you want a **vector**:
+
+```{r pull, include = FALSE}
+iris %>%
+  pull(Petal.Length)
+
+iris[, "Petal.Length"]
+
+iris[["Petal.Length"]]
+```
+
+```{r, echo = FALSE}
+decorate("pull", eval = FALSE) %>% flair("pull") %>% flair("[[") %>% flair("]]")
+```
+
+
+--
+
+If you want a **data frame** with **one column**:
+
+
+```{r drop, include = FALSE}
+iris %>%
+  select(Petal.Length)
+
+subset(iris, select = Petal.Length)
+
+iris[, "Petal.Length", drop = FALSE]
+```
+
+```{r, echo = FALSE}
+decorate("drop", eval = FALSE) %>% flair(", drop = FALSE")
+```
+---
+class: center, middle, inverse
+
+# My least favorite thing about the tidyverse...
+
+---
+# Conditional altering
+
+Suppose I have suddenly realized that I misrecorded the `setosa` iris data.  Oh no!
+
+Every petal width of a setosa iris is listed as 1cm shorter than it should be.
+
+How would you fix this in the tidyverse?
+
+---
+# Conditional altering
+
+**Tidy:** `mutate` + `case_when`
+
+```{r, eval = FALSE}
+iris %>%
+  mutate(
+    Petal.Width = case_when(
+      Species == "setosa" ~ Petal.Width + 1,
+      TRUE ~ Petal.Width
+    )
+  )
+```
+
+... is there a better solution?  This is a lot of typing for a quick fix.
+
+---
+# Conditional altering
+
+**Base:** Replace only certain rows using `<-`
+
+```{r, eval = FALSE}
+is_setosa <- iris$Species == "setosa"
+
+iris[is_setosa, "Petal.Width"] <- iris[is_setosa, "Petal.Width"] + 1
+```
+
+--
+A bit repetitive, but maybe nicer?
+--
+
+But, **dangerous!**
+
+---
+# Conditional altering
+
+What will go wrong in each of the following?
+
+1. 
+
+```{r, eval = FALSE}
+is_setosa <- Species == "setosa"
+
+iris[is_setosa, "Petal.Width"] <- iris[is_setosa, "Petal.Width"] + 1
+```
+
+2. 
+
+```{r, eval = FALSE}
+is_setosa <- iris$Species == "setosa"
+
+iris[is_setosa, ] <- iris[is_setosa, "Petal.Width"] + 1
+```
+
+3.
+
+```{r, eval = FALSE}
+is_setosa <- iris$Species == "setosa"
+
+iris$Petal.Width <- iris[is_setosa, "Petal.Width"] + 1
+```
+
+---
+class: center, middle, inverse
+
+# Offer
+
+## + 5 Flex Points to anyone that finds a more elegant (by my judgement) `tidyverse` solution to this task.
+
+
+---
+class: center, middle, inverse
+
+# Grouping and Summarizing
+
+---
+# Grouping and Summarizing
+
+**Tidy:** `group_by`, `summarize`
+
+```{r}
+iris %>%
+  group_by(Species) %>%
+  summarize(mean(Petal.Length))
+```
+
+---
+# Grouping and Summarizing
+
+**Base:** ... yikes.
+
+```{r}
+mean(iris[iris$Species == "setosa", "Petal.Width"])
+mean(iris[iris$Species == "virginica", "Petal.Width"])
+mean(iris[iris$Species == "versicolor", "Petal.Width"])
+```
+
+---
+# Grouping and Summarizing
+
+**Slightly Better Base:** limited, but clean
+
+```{r agg, include = FALSE}
+aggregate(Petal.Width ~ Species, mean, data = iris)
+```
+```{r, echo = FALSE}
+decorate("agg") %>% flair("Petal.Width ~ Species")
+```
+
+---
+class: center, middle, inverse
+
+# To the rescue:
+
+## `data.table` package
+
+## *install it now!*
+
+---
+
+# Grouping and Summarizing
+
+```{r, message = FALSE}
+library(data.table)
+```
+
+```{r dt}
+iris <- as.data.table(iris)
+
+iris[, .(mean_pw = mean(Petal.Width)), by = Species]
+```
+
+
+---
+
+# Grouping and Summarizing
+
+```{r, echo = FALSE}
+decorate("dt") %>% flair(".(", "),")
+```
+
+---
+# Reasons to use `data.table`
+
+Maybe you prefer the syntax?
+
+![](youdoyou.gif)
+
+---
+
+**SPEED!!!!!!!!!!!!!!!!!!!**
+
+![](needforspeed.gif)
+
+--
+
+`data.table` will essentially **always** be the fastest option.
+
+For all the data we use in this class, the difference is negligible.
+
+But one day, you might have massive data that is slow in `dplyr`.
+
+---
+
+![](losdos.jpg)
+
+`dtplyr` is a very new package that wraps `data.table` in `dplyr`.
+
+`tidydt` does the same, but possibly more extensive?
+
+Disclaimer:  These are brand new; I don't know much about them.  
+
+(For my data, `dplyr` is plenty fast.)
+

@@ -1,0 +1,450 @@
+---
+title: "Intro to the Tidyverse"
+author: "Stat 331"
+
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(tidyverse)
+library(flair)
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+solarized_light()
+```
+
+class: center, middle
+
+# R History lesson:
+# What is the `tidyverse`?
+
+---
+# The tidyverse
+
+The `tidyverse` is a collection of packages that follow a (somewhat) consistent philosophy and structure.
+
+The term `base R` is sometimes used as an alternative, to refer to only R's built-in packages.
+
+A brief history:
+
+--
+
+**2008:** `plyr` and `ggplot` released as part of **Hadley Wickham**'s doctoral dissertation.
+
+--
+
+**2012:** The pipe (`%>%`) is created.  
+
+*(While the pipe itself is not technically tidyverse, the tidyverse is built around its use.)*
+
+--
+
+**2014:** `dplyr` released; Wickham hired as Chief Scientist at **RStudio**
+
+--
+
+**Today:** A paid team of 12-ish developers maintains a huge number of packages.  (https://www.tidyverse.org/)
+
+---
+# The tidyverse
+
+**Pros:**
+
+* Some consider it more accessible/readable
+
+```{r, eval = FALSE}
+iris %>%
+  filter(Species == "setosa")
+```
+
+```{r, eval = FALSE}
+
+iris[iris$Species == "setosa",]
+```
+
+*Pipe-friendly*
+
+*English verbs instead of symbols*
+
+
+---
+# The tidyverse
+
+**Pros:**
+
+* Fairly consistent behavior of functions
+
+    + Predictable **input** and **output** types
+    + More on this later
+    
+--
+
+* Semi-guaranteed maintenance (because RStudio pays devs)
+
+--
+
+* More available documentation and tutorials
+
+--
+
+* Welcoming community
+
+---
+# The tidyverse
+
+**Cons:**
+
+* Sometimes less flexible for complex tasks
+
+--
+
+* Generally slower, especially on big data
+
+(see:  `data.table`)
+(see:  `dtplyr`)
+
+--
+
+* Updates frequently -> sometimes this makes your old code unrunnable.
+
+--
+
+* Some people object to **RStudio**'s strong influence over an open-source community.
+
+---
+class: center, middle
+
+# Should you use the tidyverse???
+
+--
+
+Even the most die-hard `tidyverse` fantatics (see: Dr.B.) use base R and other packages for some tasks!
+
+--
+
+Above all, the best code approach is the one you enjoy the most and that gets the job done!
+
+--
+
+You are free to use whatever package(s) you want in this class!
+
+
+---
+
+class: center, middle, invert
+
+# Cleaning and transforming data
+
+<img src="https://d33wubrfki0l68.cloudfront.net/071952491ec4a6a532a3f70ecfa2507af4d341f9/c167c/images/hex-dplyr.png" width=300>
+
+
+---
+class: center, middle, invert
+
+# Prerequisite:  The Pipe  `%>%`
+
+---
+
+# The Pipe
+
+```{r, echo = FALSE}
+flair_code('iris %>% summary()', eval = FALSE) %>% 
+  hlt_fixed("%>%") %>% 
+  hlt_funs(color = "teal")
+```
+
+is the same as
+
+```{r, echo = FALSE}
+flair_code('summary(iris)', eval = FALSE) %>% 
+  hlt_funs(color = "teal")
+```
+
+
+* Originally part of the `magrittr` package
+
+* Central to the philosophy and design of the *tidyverse*
+---
+## Idea 1: Analysis steps should flow sequentially.
+## Idea 2: Code should read a bit like an English sentence.
+
+What do you think the following will do?
+
+```{r, eval = FALSE}
+mtcars %>%
+  filter(hp > 100) %>%
+  arrange(mpg)
+```
+
+(demo)
+---
+# Today's Data: Cereal
+
+* Download `Practice.Rmd` from Canvas.
+
+* Run the first two chunks to load up the `cereal` dataset.
+
+* Get a feel for the data - what does it contain?
+
+
+---
+
+# Summarizing
+
+```{r, echo = FALSE}
+flair_code('
+iris %>%
+  summary()
+  ') %>% hlt_fixed("y(")
+```
+
+---
+# Summarizing
+
+```{r, echo = FALSE}
+flair_code('
+iris %>%
+  summarize(mean(Petal.Length))
+  ') %>% 
+  hlt_fixed("ize(") %>% 
+  hlt_fixed("mean", color = "teal") %>%
+  hlt_fixed("Petal.Length", color = "cornflowerblue")
+```
+
+--
+
+* What are the **required** arguments of `summarize`?  
+
+* Are there any optional arguments?
+
+---
+
+# Many variables?  Many summary statistics?
+## No problemo
+
+```{r, echo = FALSE}
+flair_code('
+iris %>%
+  summarize_at(vars(Petal.Length, Petal.Width),
+            funs(mean, median))
+  ') %>% 
+  hlt_fixed("_at") %>%
+  hlt_regexp("(mean)|(median)", color = "teal") %>%
+  hlt_regexp("(Petal.Length)|(Petal.Width)", color = "cornflowerblue") %>%
+  hlt_regexp("(vars)|(funs)", color = "darkred")
+```
+---
+class: center, middle, invert
+
+# Your Turn!
+
+---
+class: center, middle, invert
+# In `Practice.Rmd`, find the following:
+
+* Mean, Median, and standard deviaton of the sugar content of cereals
+
+* Total calories of all cereals together
+
+---
+# Making new variables
+
+Verb: `mutate()`
+
+The dataset gets *mutated* to include a new variable.
+
+```{r}
+iris %>%
+  mutate(
+    Petal.Size = Petal.Length*Petal.Width
+  ) %>%
+  str()
+```
+
+---
+
+Cool, let's look at our new variable!
+
+```{r, error = TRUE}
+iris %>%
+  summarize_at(vars(Petal.Size), funs(mean, median))
+```
+
+OH NO!
+
+**What happened here?**
+
+---
+
+class: center, middle
+
+# We calculated a new variable, but didn't save our changes.
+
+---
+
+```{r, echo = FALSE}
+flair_code('
+iris_new <- iris %>%
+          mutate(
+            Petal.Size = Petal.Length*Petal.Width
+          )
+          
+iris_new$Petal.Size
+') %>% hlt_fixed("iris_new <- ")
+
+
+```
+
+---
+# Ordering
+
+Verb: `arrange()`
+
+We **arrange** the dataset in order of a particular variable.
+
+```{r}
+iris_new %>% 
+  arrange(Petal.Width)
+```
+
+---
+
+## Related: `top_n`
+
+```{r}
+iris_new %>%
+  top_n(3, Petal.Width)
+```
+
+---
+
+# Quick check in!
+
+Remember,
+
+```{r, eval = FALSE}
+iris_new %>%
+  top_n(3, Petal.Width)
+```
+
+is the same as
+
+```{r, eval = FALSE}
+top_n(iris_new, 3, Petal.Width)
+```
+
+or
+
+```{r, eval = FALSE}
+top_n(x = iris_new, n = 3, wt = Petal.Width)
+```
+
+---
+
+# Selecting
+
+Verb: `select()`
+
+We **select** which variables we would like to remain in the dataset.
+
+```{r, eval = FALSE}
+iris_new %>%
+  select(Species, Petal.Size) %>%
+  arrange(Petal.Size)
+```
+
+---
+
+# Filtering
+
+Verb: `filter()`
+
+We **filter** which variables we would like to remain in the dataset.
+
+```{r, eval = FALSE}
+iris_new %>%
+  select(Species, Petal.Size) %>%
+  filter(Species == "setosa") %>%
+  arrange(Petal.Size)
+```
+
+---
+class: center, middle, invert
+
+# Your Turn!
+
+---
+
+## In `Practice.Rmd`, make a new dataset called `kellogg_calories`, with the following changes:
+
+1. There is a new variable called `cal_per_serving` which shows the number of calories in each serving of the cereals.
+
+2. The dataset only includes this new variable, the name of the cereal, and the brand of the cereal.
+
+3. The dataset only includes Kellogg brand cereals
+
+4. The cereals in the dataset are ordered from most to least calories.
+
+**For bonus points, do all these in one sequence of pipes!**
+
+
+---
+
+# Plotting: The pipe is your friend
+
+Want a histogram of just *setosa* iris sepal lengths?  Pipe it through `filter()` first!
+
+```{r, message = FALSE, fig.height=4}
+iris %>%
+  filter(Species == "setosa") %>%
+  ggplot(aes(x = Sepal.Length)) +
+    geom_histogram()
+```
+
+---
+
+class: center, middle, invert
+
+# YOUR TURN
+
+---
+class: center, middle
+
+## For each of the four main plot types (histogram, barplot, boxplot, scatterplot), make an interesting visualization from your cereal dataset.
+
+---
+class:center,middle,invert
+
+# Grouping and summarizing
+---
+# `group_by`
+
+* We just learned how to use the `summarize` functions to get information.
+
+* What if you want to summarize your data within categories?
+
+```{r}
+iris %>%
+  group_by(Species) %>%
+  summarize(mean(Sepal.Length))
+
+```
+---
+# Try it!
+
+* Find the average calories per cereal for each manufacturer.
+
+* Find the average sugar per cereal for hot and cold cereals.
+
+---
+

@@ -1,0 +1,12 @@
+name: 331_midterm_details
+title: 331 Midterm Details
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 85
+bundleId: 174
+url: https://rstudio.csm.calpoly.edu/content/85/
+when: 1581537403.3937
+asMultiple: FALSE
+asStatic: TRUE

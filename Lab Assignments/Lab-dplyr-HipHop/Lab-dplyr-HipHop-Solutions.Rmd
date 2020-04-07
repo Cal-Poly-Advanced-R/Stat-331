@@ -1,0 +1,255 @@
+---
+title: "Lab 1: HipHop Lyrics"
+author: "Solutions"
+output: html_document
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=6, fig.height=4, fig.path='Figs/',
+                      echo=TRUE, warning=FALSE, message=FALSE,eval=TRUE)
+
+```
+
+
+
+```{r, include = FALSE}
+hiphop <- read.csv("https://www.dropbox.com/s/1qqyshx5ikt9zoc/hiphop.csv?dl=1")
+
+library(tidyverse)
+
+# If you get an error on library(tidyverse), run the line below in your console.  Do NOT uncomment this line!
+
+# install.packages("tidyverse")
+```
+
+# Introduction  (5 points)
+
+1. Provide a brief overview (2-4 sentences) of the dataset. (It is always good practice to start an analysis by getting a feel for the data and providing a quick summary for readers.) You do **not** need to show any source code for this question, although you probably want to use code to get information.
+
+```
+[Answer should mention the structure of the dataset and describe a few of the variables]
+```
+
+2. Clean the dataset in whichever ways you see fit.
+```
+[Answers will vary - just check that something is here.]
+```
+
+3. How many unique AAVE words were studied in this dataset?
+
+```{r}
+hiphop %>%
+  distinct(word) %>%
+  nrow()
+```
+
+
+4. Make a new variable that recategorizes `ethnic` into only two groups, "white" and "non-white", to simplify your data.
+
+Potentially helpful functions: `mutate()`, `case_when()`
+
+```{r}
+hiphop <- hiphop %>%
+  mutate(
+    ethnic_group = case_when(
+      ethnic == "white" ~ "white",
+      TRUE ~ "non-white"
+    ),
+    ethnic_group = as_factor(ethnic_group)
+  )
+```
+
+
+5. What are the demographics of the people in this study?  Investigate the variables `sex`, `age`, and `ethnic` and summarize your findings in 1-3 complete sentences.  
+
+Functions:  `select()`, `unique()` or `distinct(, .keep_all = TRUE)`, `count()`,  `summary()`
+
+```{r}
+subjects <- hiphop %>% 
+  select(subj, age, sex, ethnic_group) %>% 
+  distinct(subj, .keep_all = TRUE)
+      
+
+subjects %>% 
+  summary()
+```
+
+```
+There were 117 women and 51 men in this study.  
+135 subjects identified as white, while 33 identified as non-white.
+The ages ranged from 16 to 48, with a median of 19.
+```
+
+
+5. Make at least two plots to display the demographic information of the subjects in this study.  You do not need to discuss these plots, but make sure they are appropriate to the data types and have informative titles and axis labels.
+
+Functions:  `ggplot()`, `geom_histogram()`, `geom_boxplot()`, `geom_bar()`, `ggtitle()`, `xlab()`, `ylab()`
+
+```{r}
+# a few options exist, but I like these
+
+subjects %>% 
+  ggplot(aes(x = age)) + geom_histogram(bins = 20) +
+  ggtitle("Age of subjects")
+
+subjects %>% 
+  ggplot(aes(x = ethnic_group, fill = sex)) + geom_bar(position = "dodge") +
+  ggtitle("Ethnic group and gender of subjects") + xlab("reported ethnicity")
+```
+
+
+## Familiar words
+
+1.  For each demographic group listed below, determine which word(s) in this study was the most and least familiar on average.
+
+a. People below the age of 20
+b. Non-white women
+c. White men above the age of 30
+
+Functions: `filter()`, `group_by()`, `summarize_at()`, `arrange()`, `desc()`
+
+```{r}
+
+
+#a
+young <- hiphop %>% 
+  filter(age < 20) %>% 
+  group_by(word) %>% 
+  summarize_at(vars(familiarity), funs(mean)) 
+
+young %>% top_n(1, desc(familiarity))
+
+young %>% top_n(1, familiarity)
+
+
+#b
+
+nonwhite_women <- hiphop %>% 
+  filter(sex == "Female", ethnic_group == "non-white") %>% 
+  group_by(word) %>% 
+  summarize_at(vars(familiarity), funs(mean)) 
+
+nonwhite_women %>% top_n(1, desc(familiarity))
+
+nonwhite_women %>% top_n(1, familiarity)
+
+
+#c
+old_white_men <- hiphop %>% 
+  filter(sex == "Male", ethnic_group == "white", age > 30) %>% 
+  group_by(word) %>% 
+  summarize_at(vars(familiarity), funs(mean)) 
+
+old_white_men %>% top_n(1, desc(familiarity))
+old_white_men %>% top_n(1, familiarity)
+```
+
+2. 
+
+For each demographic comparison below, determine which music genre most differentiates the groups.  That is, which genre had much higher average (mean or median) score in one group than the other.
+
+a. Male versus Female
+b. White versus Non-White
+c. Age below 21 versus age 21+
+
+
+```{r}
+genres <- hiphop %>%
+  select(sex, ethnic_group, age, intl:hiphop)
+
+#a
+genres %>% 
+  group_by(sex) %>%
+  summarize_at(vars(intl:hiphop), funs(mean))
+
+#b
+genres %>% 
+  group_by(ethnic_group) %>%
+  summarize_at(vars(intl:hiphop), funs(mean))
+
+#c
+genres %>% 
+  group_by(age < 21) %>%
+  summarize_at(vars(intl:hiphop), funs(mean))
+```
+
+
+
+# Use the data
+
+A former Canadian child TV star named Aubrey Graham is interested in switching careers to become a rapper.  Aubrey hires you to consult the `hiphop` dataset to help compose his new songs. 
+
+*Note: There is no single right answer to these questions.  You will need to think about how you want to address the question, and do the appropriate variable adjustments and calculations to come up with a reasonable answer.*
+
+1.  Aubrey hopes that his songs will be percieved as authentically hiphop.  He hopes his lyrics will be recognizeable to those who describe themselves as hiphop fans, but less recognizeable to those who do not consider themselves fans.  Suggest some words or phrases that Aubrey should try to use, and some words he should avoid. 
+
+```{r}
+
+fans <- hiphop %>% 
+  filter(hiphop > 7) %>%
+  group_by(word) %>% 
+  summarize(avg_fam = mean(familiarity))
+
+not_fans <- hiphop %>% 
+  filter(hiphop < 4) %>%
+  group_by(word) %>% 
+  summarize(avg_fam = mean(familiarity))
+
+new <- full_join(fans, not_fans, by = "word") %>%
+  mutate(
+    diff = avg_fam.x - avg_fam.y
+  ) 
+
+new %>% top_n(5, diff)
+new %>% top_n(5, desc(diff))
+
+```
+
+
+2. Although Aubrey wants to be authentic, he also hopes to sell records, of course.  Two titles have been suggested for his first album: "Hotline Boo" or "Hella Bling".  Based on the dataset, which will appeal more to the higher population areas?  Make at least one plot to support your answer.
+
+*Hint: Consider first converting the population variable(s) to categories, such as "large", "medium", and "small".  You may also want to use the "fam1" variable instead of "familiarity"*
+
+```{r}
+
+titles <- hiphop %>% 
+  filter(word %in% c("boo", "hella")) %>%
+  mutate(
+    city_size = case_when(
+      city > 200000 ~ "Large",
+      city > 50000 ~ "Medium",
+      TRUE ~ "Small"
+    )
+  )
+
+ggplot(titles, aes(x = city_size, y = fam1, fill = word)) + geom_col(position = "fill")
+
+
+
+```
+
+3. Aubrey's true life dream is to collaborate with his fellow Canadian musician Justin Bieber.  Luckily, he knows that Bieber himself was one of the subjects in this study!  You know that Bieber is a white male, aged 17-23 at the time of the study, from a relatively small town (10,000-60,000 people) in Ontario.
+
+Determine which subject is secretly Bieber, and justify your answer.
+
+Then suggest a track listing (11 song titles) for Aubrey's song collaboration with the Biebs.
+
+*Hint: Refer again to the dataset description.  There is another clue about Bieber's identity.*
+
+
+```{r}
+hiphop %>% 
+  distinct(subj, .keep_all = TRUE) %>%
+  filter(sex == "Male", age <= 23, age >= 17, city < 60000, city > 10000) %>%
+  top_n(1, bieber) %>%
+  select(subj)
+
+#biebs is subj17
+
+hiphop %>% 
+  filter(subj == "p17") %>% 
+  select(word, familiarity) %>%
+  top_n(1, familiarity)
+
+```
+

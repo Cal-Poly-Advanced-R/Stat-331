@@ -1,0 +1,12 @@
+name: final_project
+title: Final_Project
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 90
+bundleId: 184
+url: https://rstudio.csm.calpoly.edu/Final_Project_331/
+when: 1582750468.57137
+asMultiple: FALSE
+asStatic: TRUE

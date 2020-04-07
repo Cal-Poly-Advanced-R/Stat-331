@@ -1,0 +1,30 @@
+
+Answers should be given half credit if there is an incorrect but reasonable attempt.
+
+  Q1: 5 points
+    - Just make sure *something* was done with "date" to make it a datetime object
+  
+  Q2: 5 points
+  
+  Q3: 5 points
+  
+  Q4: 15 points 
+    - (answers will vary)
+  
+  Q5: 15 points 
+    - (answers will vary slightly but should all be some form of "Love")
+  
+  Q6: 20 points (10 each)
+  
+  Q7: 20 points (10 each)
+    - "His orchestra" is also acceptable for the featured question
+    - If you see other common answers, run them by me, they are probably okay.
+  
+  Style: 15 points
+    - If you see a pipeline without proper formatting (each pipe should be on a new line and indented): -5
+    - If you see an object being created and never used again: -5
+    (That is, somthing like:
+        a <- mean(1:10)
+        a
+    and then "a" is never again referenced.)
+    - If they printed out extra content besides that which answers the questions: -5

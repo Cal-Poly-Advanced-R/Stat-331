@@ -1,0 +1,98 @@
+---
+title: "PA 12:  Distributions and Bootstrapping Review"
+author: "Stat 331"
+output: rmdformats::readthedown
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = FALSE)
+library(tidyverse)
+```
+
+**This PA is optional!**
+
+This is not the same as Extra Credit.  This means that if you complete it, it will be part of your overall PA grade average; but if you choose not to complete it, you will not be penalized.
+
+## The Cauchy Distribution
+
+The Cauchy distribution is a continuous distribution with possible values from negative infinity to infinity.  It is an unusual distribution in many ways.  We will use simulation and bootstrapping to explore this.
+
+## Instructions
+
+Perform the following steps:
+
+1. Simulate a sample of size 100 from the standard Cauchy distribution.  *(Hint: Remember the `p, q, r, d` functions for simulation!)*
+
+2. Take 1000 bootstrap samples from your simulated sample.  Make a 95% confidence interval for (a) the mean and (b) the median.
+
+```{r}
+
+c_sam <- rcauchy(100)
+
+csam <- replicate(1000, sample(c_sam, replace = TRUE), simplify = FALSE)
+
+mans <- map_dbl(csam, mean)
+meds <- map_dbl(csam, median)
+
+
+quantile(mans, c(.025, .975))
+quantile(meds, c(.025, .975))
+
+
+```
+
+3. Repeat (1) and (2) ten times.  That is, you should have a NEW simulated Cauchy sample each time.  Save the upper and lower bounds of the mean and median confidence intervals at each step.
+
+Your result should be a data frame that looks something like this, but with very different values:
+
+```{r, eval = TRUE}
+fake_df <- tibble(
+  trial = 1:5,
+  upper_mean = runif(5),
+  lower_mean = upper_mean - runif(5),
+  upper_median = runif(5),
+  lower_median = upper_median - runif(5),
+)
+
+fake_df
+```
+
+
+4. Make a plot showing the 10 mean confidence intervals, and another plot showing the 10 median confidence intervals.  (It is your choice what kind of plot to use - `geom_errorbarh` is a nice option.)
+
+```{r}
+
+
+my_CIs <- data.frame()
+
+for(i in 1:10){
+  
+  c_sam <- rcauchy(100)
+  
+  csam <- replicate(1000, sample(c_sam, replace = TRUE), simplify = FALSE)
+  
+  mans <- map_dbl(csam, mean)
+  meds <- map_dbl(csam, median)
+  
+  
+  my_CIs <- rbind(my_CIs, c(quantile(mans, c(.025, .975)), quantile(meds, c(.025, .975))))
+
+}
+
+names(my_CIs) = c("lower_mean", "upper_mean", "lower_med", "upper_med")
+
+ggplot(my_CIs) + geom_errorbarh(aes(xmin = lower_mean, xmax = upper_mean, y = 1:10))
+
+ggplot(my_CIs) + geom_errorbarh(aes(xmin = lower_med, xmax = upper_med, y = 1:10))
+
+```
+
+
+## Conclusion
+
+Mathematically, for the Cauchy distribution, one of the statistics we studied (mean or median) does not exist!  That is, it is equal to infinity, and therefore impossible to estimate with bootstrapping.
+
+For one of your statistics, your bootstrap CIs should have been fairly similar.
+For the other, they should be all over the place.
+
+Use your results to answer the question on Canvas:  which statistic (mean or median) does not exist for the Cauchy distribution?

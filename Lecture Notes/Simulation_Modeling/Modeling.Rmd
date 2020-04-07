@@ -1,0 +1,403 @@
+---
+title: "Modeling and Statistics"
+author: Kelly Bodwin
+date: 
+output: 
+  ioslides_presentation:
+    fontsize: 10pt
+    incremental: true
+  # beamer_presentation:
+  #   theme: "boxes"
+  #   colortheme: "beaver"
+  #   fonttheme: "structurebold"
+---
+
+# Is this a statistics class or not???
+
+```{r, include = FALSE}
+titanic <- read.csv("https://raw.githubusercontent.com/kbodwin/ShinyLabs/master/Datasets/titanic.csv")
+library(tidyverse)
+library(lubridate)
+library(modelr)
+library(broom)
+```
+
+# Sampling from data
+
+## Our best friend the titanic dataset
+
+```{r}
+head(titanic)
+```
+
+## Sampling from data
+
+Let's take a sample of 10 passengers:
+
+```{r, eval = FALSE}
+?sample
+
+```
+
+## Sampling from data
+
+Let's take a sample of 10 passengers:
+
+```{r, eval = FALSE}
+sample(10)
+
+```
+
+## Sampling from data
+
+Let's take a sample of 10 passengers:
+
+```{r}
+sample(10)
+
+```
+
+## Sampling from data
+
+Let's take a sample of 10 passengers:
+
+```{r}
+
+sample(titanic$Name, 10)
+
+```
+
+## Sampling from data
+
+Let's take a sample of 10 passengers:
+
+```{r}
+sample(1:nrow(titanic), 10)
+
+```
+
+## Sampling from data
+
+Let's take a sample of 10 passengers:
+
+```{r}
+rand <- sample(1:nrow(titanic), 10)
+titanic[rand,]
+
+```
+
+## Sampling from data
+
+Let's take a sample of 10 passengers:
+
+```{r}
+
+titanic %>%
+  sample_n(10)
+
+```
+
+
+
+
+# Probability distributions
+
+## Probability distributions
+
+Recall from your previous statistics classes...
+
+- A **random variable** is a value we don't know until we take a **sample**.
+    + Coin flip:  Could be heads (0) or tails (1)
+    + Person's height:  Could be anything from 0 feet to 20 feet.
+- The possible values of a random variable, and how likely they are, is determined by the **distribution**.
+    + Coin flip has 50% chance of heads, 50% chance of tails
+    + Likelihood of heights follow a bell curve around 5 foot 7.
+    
+## Probability distributions
+
+- Some distributions have names.  For this class, you need to know:
+    + Uniform
+    + Normal
+    + t-distribution
+    + Binomial
+    + Chi-Square
+- (What you need to know: basic idea of when it is appropriate to use them.)
+    
+## Distributions in R
+
+- r for **random sampling**: generate a random value from the
+distribution
+
+```{r}
+runif(3)
+runif(3, min = 10, max = 20)
+
+rnorm(3)
+rnorm(3, mean = -100, sd = 50)
+
+
+```
+
+## Distributions in R
+
+- r for **random sampling**: generate a random value from the
+distribution
+
+```{r}
+
+rt(3, df = 11)
+
+rbinom(3, size = 10, prob = 0.7)
+
+rchisq(3, df = 11)
+```
+
+## Distributions in R
+
+- p for **probability**: cumulative distribution function, i.e.
+compute P(X < x)
+
+```{r}
+pnorm(1.5)
+pnorm(70, mean = 67, sd = 3)
+
+1 - pnorm(70, mean = 67, sd = 3)
+```
+
+## Exercise
+
+- What is the probability that a Chi-Square distribution with 35 degrees of freedom gives a value of 25 or less?
+- What is the probability that 10 coin tosses give 6 or more heads?
+
+## Distributions in R
+
+- q for **quantile**: given a probability p, compute the x-value
+such that P(X < x) = p.
+
+```{r}
+qnorm(.95)
+qnorm(.95, mean = 67, sd = 3)
+```
+
+## Exercise
+
+- If I randomly sample a number between 16 and 22, I can be 80% sure my number will be less than what?
+- What is the critical value for a 1-sided t-test at the 0.05 significance level, with a sample size of 50?
+
+
+## Distributions in R
+
+- d for **density**: compute the height of the mass or density
+curve/function
+    + Continuous distributions: usually meaningless
+
+## Exercise
+
+- What is the probability of getting exactly 12 heads in 20 coin tosses?
+
+# Let's practice!
+
+## Let's practice!
+- WITHOUT USING R, try to predict the following:
+
+```{r, eval = FALSE}
+
+punif(0.674)
+
+pnorm(2)
+qnorm(.975)
+
+pchisq(0, df = 12)
+
+qt(10, df = 16)
+
+dbinom(1, size = 2, prob = .87)
+pbinom(1, size = 2, prob = .87)
+
+```
+
+## Let's practice!
+
+
+```{r, eval = TRUE}
+
+punif(0.674)
+
+pnorm(2)
+qnorm(.975)
+
+```
+
+## Let's practice!
+
+
+```{r, eval = TRUE}
+pchisq(0, df = 12)
+
+qt(10, df = 16)
+
+dbinom(1, size = 2, prob = .87)
+pbinom(1, size = 2, prob = .87)
+
+```
+
+## Plotting distributions
+
+```{r}
+my_samples <- data.frame(x = rnorm(100))
+
+ggplot(my_samples, aes(x)) + geom_histogram()
+```
+
+## Plotting distributions
+
+```{r}
+ggplot(my_samples, aes(x)) + 
+  geom_histogram(bins = 10) 
+```
+
+## Plotting distributions
+
+```{r}
+
+ggplot(my_samples, aes(x)) + 
+  geom_histogram(bins = 10, aes(y = ..density..))
+```
+
+## Plotting distributions
+
+```{r}
+
+ggplot(my_samples, aes(x)) + 
+  geom_histogram(bins = 10, aes(y = ..density..)) + 
+  stat_function(fun=dnorm, col = "red")
+```
+
+
+# Basic hypothesis tests in R
+
+# Interlude: Review on t-tests and chi-square tests.
+
+## t-tests
+
+We would like to test if men or women paid more on the Titanic.
+
+```{r, eval = FALSE}
+?t.test
+```
+
+## t-tests
+
+We would like to test if men or women paid more on the Titanic.
+
+```{r}
+t.test(Fare ~ Sex, data = titanic)
+```
+
+## Tidying it up
+
+That output is not tidy!
+
+```{r}
+my_test <- t.test(Fare ~ Sex, data = titanic)
+tidy(my_test)  ## requires the 'broom' package!
+```
+
+## Tidying it up
+
+Why is tidying nice?  For easily referencing the info later.
+
+```{r}
+my_test <- tidy(t.test(Fare ~ Sex, data = titanic))
+my_test$p.value
+1 - pt(my_test$statistic, df = nrow(titanic))
+```
+
+## Chisquared Tests
+
+What input is expected?
+
+```{r, eval = FALSE}
+?chisq.test
+```
+
+## Chisquared Tests
+```{r}
+titanic %>% count(Sex, Pclass)
+```
+
+## Chisquared Tests
+
+```{r}
+titanic %>% 
+  count(Sex, Pclass) %>%
+  spread(key = Sex, value = n)
+```
+
+## Chisquared Tests
+
+```{r}
+titanic %>% 
+  count(Sex, Pclass) %>%
+  spread(key = Sex, value = n) %>%
+  select(female, male)
+```
+
+## Chisquared Tests
+
+```{r}
+titanic %>% 
+  count(Sex, Pclass) %>%
+  spread(key = Sex, value = n) %>%
+  select(female, male) %>%
+  chisq.test()
+```
+
+## Chisquared Tests
+
+```{r}
+titanic %>% 
+  count(Sex, Pclass) %>%
+  spread(key = Sex, value = n) %>%
+  select(female, male) %>%
+  chisq.test() %>%
+  tidy()
+```
+
+
+# Many models
+
+## List-columns
+
+A dataset.... with a variable... of datasets?
+
+```{r}
+
+titanic %>% group_by(Pclass) %>% nest()
+
+```
+
+
+## Yo dawg, I heard you like datasets...
+
+![dawg](../Images/Yo-Dawg.jpg)
+
+## Multiple tests
+
+```{r}
+
+t_by_class <- titanic %>% 
+  group_by(Pclass) %>% 
+  nest() %>%
+  arrange(Pclass)
+
+my_tests <- map_df(t_by_class$data, 
+                   ~tidy(t.test(Fare ~ Sex, data = .x)))
+
+my_tests
+```
+
+
+
+# Linear models.... later!
+

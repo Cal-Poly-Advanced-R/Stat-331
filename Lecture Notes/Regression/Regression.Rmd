@@ -1,0 +1,361 @@
+---
+title: "Regression"
+author: "Stat 331"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(tidyverse)
+library(modelr)
+library(flair)
+knitr::opts_chunk$set(echo = FALSE, fig.height = 5, fig.width = 5)
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+solarized_light()
+```
+
+class: center, middle, inverse
+
+# Introduction
+
+Today we will learn about **linear models**, by studying the popularity of names over time.
+
+---
+class: center, middle
+
+# Linear models
+
+---
+# Linear models
+
+Consider the following mystery data, `x` and `y`.
+We would like to know if these two variables are related.
+
+```{r, echo = TRUE}
+ggplot(sim1, aes(x, y)) + 
+  geom_point()
+```
+
+---
+# Linear models
+
+We could "guess" at a line through the points...
+
+... but is this the **best** line???
+
+
+```{r, echo = TRUE}
+ggplot(sim1, aes(x, y)) + 
+  geom_point() +
+  geom_abline(slope = 1.5, intercept = 7, color = "grey")
+```
+---
+# Linear models
+
+There are so many possible lines!
+
+```{r}
+models <- tibble(
+  a1 = runif(250, -20, 40),
+  a2 = runif(250, -5, 5)
+)
+
+ggplot(sim1, aes(x, y)) + 
+  geom_abline(aes(intercept = a1, slope = a2), data = models, alpha = 1/4) +
+  geom_point() 
+```
+---
+# Linear Models
+
+For a particular line, how much do we "miss" our data points by?
+*(We can never hit all of them with one straight line!)*
+
+```{r}
+dist1 <- sim1 %>% 
+  mutate(
+    dodge = rep(c(-1, 0, 1) / 20, 10),
+    x1 = x + dodge,
+    pred = 7 + x1 * 1.5
+  )
+ggplot(dist1, aes(x1, y)) + 
+  geom_abline(intercept = 7, slope = 1.5, colour = "grey40") +
+  geom_point(colour = "grey40") +
+  geom_linerange(aes(ymin = y, ymax = pred), colour = "#3366FF") 
+```
+
+---
+# Linear Models
+
+The **best** model is the one with the smallest **sum of squared residuals**.
+
+**R** can calculate this for us:
+
+```{r, echo = TRUE}
+sim1_mod <- lm(y ~ x, data = sim1)
+coef(sim1_mod)
+```
+
+--
+
+The object `y ~ x` is a **formula**.  It takes the form "Response Variable ~ Explanatory Variable(s)"
+
+--
+
+The function `lm` is **not pipe friendly!**
+
+---
+# Best linear model
+
+```{r, echo = TRUE}
+ggplot(sim1, aes(x, y)) + 
+  geom_point() +
+  geom_abline(slope = 2.05, intercept = 4.22, color = "grey")
+```
+
+---
+# Best linear model
+
+Make **R** plot the model for you!
+
+```{r, echo = TRUE}
+ggplot(sim1, aes(x, y)) + 
+  geom_point() +
+  stat_smooth(method = "lm")
+```
+---
+# Model significance
+
+```{r, echo = TRUE}
+summary(sim1_mod)
+```
+---
+# Model significance
+
+The variable `x` explains **88.05%** of the variance in the variable `y`.
+
+The slope of **2.05** is significantly different from 0  (t = **12.65**, p < 0.0001)
+
+The model is significant.  (F = **214.7**, p < 0.0001)
+
+---
+# Broom
+
+The package `broom` is nice for getting model output more conveniently:
+
+```{r, echo = TRUE}
+library(broom)
+sim1_results <- tidy(sim1_mod)
+
+sim1_results
+```
+
+---
+# Broom
+
+In R markdown: (replace quotes with tick marks)
+
+```
+The slope is "r sim1_results$estimate[2]" and 
+the intercept is "r sim1_results$estimate[1]"
+```
+
+Gives: 
+
+The slope is `r sim1_results$estimate[2]` and the intercept is `r sim1_results$estimate[1]`
+
+---
+
+class: center, middle, inverse
+
+# An example analysis
+
+---
+
+# The Data
+
+* Baby names in California from 1940-2016.  
+
+* Only names with at least 50 recorded babies that year.
+
+* Information recorded:
+    - the year
+    - how many babies had that name
+    - gender assigned at birth
+    
+---
+# Just Kellys
+
+For now, we will study only the name "Kelly":
+
+```{r, include = FALSE}
+
+library(tidyverse)
+
+## Your path will be different!
+
+kellys = read_delim("kellys_ca.csv", delim = " ")
+
+```
+
+```{r, include = TRUE}
+head(kellys)
+```
+
+
+---
+
+# Trend in Kellys over time
+
+Let's take a look at how the name "Kelly" has changed over time.  
+
+```{r plot}
+
+## geom_point instead
+
+ggplot(kellys, aes(x = Year, y = Count)) + geom_point()
+
+```
+
+Hmmm, interesting.  There seems to be a spike at 1957.  I wonder why that is.
+
+---
+# By gender
+
+These days, you don't see many male Kellys.  Lets track gender as well in our plot
+
+```{r plot2}
+
+## chunk renamed to "plot2"
+
+ggplot(kellys, aes(x = Year, y = Count, color = Gender)) + geom_line()
+
+```
+
+Why did the name Kelly suddenly get popular as a girl's name around 1957?  Why did it spike again around 1978?  
+---
+# Is my name not cool any more?
+
+I was born in 1989.  Let's look at only babies in the time frame since I was named.
+
+```{r filter}
+kellys_89 <- kellys %>%
+  filter(Year >= 1989)
+```
+
+---
+# A linear model
+
+We will create a linear model with the year as the explanatory variable, and the number of Kellys as the response.
+
+$$
+Y = X + \epsilon
+$$
+
+$$
+(\text{Number of Kellys}) = (\text{Year}) + (\text{Random Noise})
+$$
+
+---
+# A linear model
+
+```{r model}
+my_model <- lm(Count ~ Year, data = kellys_89)
+
+summary(my_model)
+```
+
+
+It does seem that the name Kelly has decreased significantly in popularity over time.  Bummer.
+
+---
+# Linear model
+
+Let's plot this linear model.
+
+```{r plot3}
+
+## changed chunk label to "plot3"
+
+ggplot(kellys_89, aes(x = Year, y = Count)) +
+  geom_point() + 
+  stat_smooth(method = "lm")
+
+```
+
+---
+# Residuals
+
+We should also check out the *residuals*.  Although there are some automatic ways to do this, we'll do it by hand for practice.
+
+```{r residuals, echo = TRUE}
+
+kellys_89 <- kellys_89 %>%
+  add_predictions(my_model) %>%
+  mutate(
+    residual = Count - pred
+  )
+
+ggplot(kellys_89, aes(x = Year, y = residual)) + geom_point()
+```
+
+**Nope - residuals are terrible!  This is because we didn't account for gender.**
+
+---
+# Gender
+
+What about by gender?
+
+```{r gender model}
+
+my_model_2 <- lm(Count ~ Year*Gender, data = kellys_89)
+
+ggplot(kellys_89, aes(x = Year, y = Count, color = Gender)) + geom_point() + stat_smooth(method = "lm")
+
+```
+
+---
+# New residuals
+
+```{r}
+## need to pipe "kellys_89" into add_predictions
+kellys_89 <- kellys_89 %>% 
+  add_predictions(my_model_2) %>%
+  mutate(
+    residual = Count - pred
+  )
+
+ggplot(kellys_89, aes(x = Year, y = residual, color = Gender)) + geom_point()
+```
+
+---
+# Conclusion
+
+```{r}
+
+tidy(my_model_2)
+```
+
+
+We conclude that the name "Kelly" is decreasing by about 30 babies per year for women, and about 2.5 babies per year for men.  Overall, there are more female Kellys than male Kellys.
+
+Based on the residuals, a linear model is probably reasonable for the decrease in female Kellys, but not so much for the male Kellys, since the blue points follow somewhat of a curved "smile" pattern.
+
+---
+class: center, middle, invert
+
+# PA 10
+
+Replicate this analysis for a name of your choice.
+
+Use the template "Baby_Names.Rmd" to help you.  However, this template has many errors that you will need to correct!
+

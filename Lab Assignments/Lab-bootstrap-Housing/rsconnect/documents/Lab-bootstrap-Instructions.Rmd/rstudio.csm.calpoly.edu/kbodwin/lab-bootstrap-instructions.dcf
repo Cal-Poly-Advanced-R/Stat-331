@@ -1,0 +1,12 @@
+name: lab-bootstrap-instructions
+title: Lab-bootstrap-Instructions
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 92
+bundleId: 190
+url: https://rstudio.csm.calpoly.edu/Lab_Bootstrap/
+when: 1583197044.8223
+asMultiple: FALSE
+asStatic: TRUE

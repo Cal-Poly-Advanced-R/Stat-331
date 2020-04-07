@@ -1,0 +1,12 @@
+name: modeling
+title: Modeling
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 89
+bundleId: 181
+url: https://rstudio.csm.calpoly.edu/content/89/
+when: 1582574771.66527
+asMultiple: FALSE
+asStatic: TRUE

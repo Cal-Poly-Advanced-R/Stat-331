@@ -1,0 +1,81 @@
+---
+title: "Midterm Details"
+author: "Stat 331"
+output: rmdformats::readthedown
+---
+
+## Policies
+
+
+  * You may use: any item on Canvas (including notes and solutions), any notes you have brought with you, and any resources online.  
+  * You may NOT contact anyone, inside or outside this classroom, during the course of the exam.  This includes email, chat/messenger services, and posting on online forums and message boards. This also includes shared Google Docs; you should copy shared notes to a private file.
+  * You may NOT use exam materials from previous years.
+  * Violations of academic honesty include accessing and using any illegal materials, and giving or receiving help on this exam including looking at other student's exams, allowing other students to look at your own exam, and/or revealing any information about this exam or future exams to someone who has not yet taken it.
+  *  Students who exhibit academic misconduct will be reported to the Office of Student Rights
+and Responsibilities; academic dishonesty may be punishable by a grade of F in this course.
+  * You may **not** discuss the exam with any other students until after the exams have been returned to all sections.
+  * If you witness others exhibiting academic misconduct, you have a duty to report them to your
+professor.
+
+## Basic Instructions
+
+ *  Please note that you will probably need to use the data documentation in order to successfully complete this exam.
+* The problems on this exam do not necessarily need to be completed sequentially, e.g., if you cannot accomplish problem 1, you may still be able to accomplish problem 2.
+* Some parts to problems may need to be completed sequentially.  If you cannot complete part (a), please outline code or your thought process for completing part (b).
+*  All questions should be answered **using R code**.  Make sure your code prints out only the information that directly answers the question.  **Penalties will be given if your .html file has extra output beyond that which answers the question.**
+  *  If your code has errors that you cannot fix in time, you may also include in the comments explanations of your thought process, to potentially recieve partial credit.
+  *  For parts 1 and 3, submit both your `.Rmd` and `.html` files on Canvas by the end of the allotted time. However, only your `.html` file will be graded - make sure the knitted output contains all your answers.
+  * Late uploads will be automatically deducted by -10 points per minute!
+
+## The Data
+
+Your dataset for the exam can be found on Canvas. It is called `NBA_player_of_the_week.csv`.
+
+The dataset contains information about the "Player of the Week", awarded each week to the player(s) who performed the best during that week's games. 
+
+Each observation in this dataset represents an instance of a certain player being awarded Player of the Week.
+
+
+You may bring to the exam any pre-analysis you have done of this data.
+
+
+### NBA facts and vocabulary
+
+In the National Basketball Association (NBA), games are played between Fall and Spring each year, ending with a set of playoff games and a championship.  One "season" of games thus spans two calendar years. For example, the 2019-2020 season began on October 22, 2019 and will end on April 15, 2020. The playoffs will begin on April 18, 2020, and will end with the NBA Finals in June 2020. 
+
+Teams in the NBA are organized into two Conferences:  East and West.  From time to time, as teams change locations or new teams are added, the conferences change.
+
+Players join the NBA by being *drafted*, typically when they are 18 years old.
+
+
+
+
+## Part One: Function Writing (50 pts)
+
+You will be asked to write a function and use it on the dataset.
+
+You will turn in a `.Rmd` and a `.html` file.
+
+There will be an opportunity for extra credit for writing a *vectorized* function.
+
+You will be graded on the correct output of the function, as well as your code style and design.
+
+## Part Two: Short Answers (50 pts)
+
+You will be asked a series of short questions with only a single correct answer, such as "What region sold the most avocados overall?"
+
+You will enter your answers into a "quiz" on Canvas.  
+
+You will also turn in your `.html` and `.Rmd` files.  These do not need to be formatted or styled nicely, and they will not be graded; they will only be used to confirm that you used code, not Google, to answer the questions.
+
+After submitting your Canvas quiz, you will be able to see your score.  You may choose to correct your wrong answers and resubmit again, and your scores will be averaged.
+
+## Part Three: Data Analysis (100 pts)
+
+You will be asked to perform several data analysis tasks.
+
+This will definitely include at least one "Recreate the Plot" question, at least one open-ended question, and a very difficult Extra Credit question.
+
+You will turn in your `.html` and `.Rmd` files; only your `.html` file will be graded.  Make sure your output contains all your answers, and only answers the question asked.
+
+Code style and design **is** part of your grade.  However, you are free to use any approach - tidyverse, base R, other packages, or combinations thereof - to address the questions.

@@ -1,0 +1,46 @@
+---
+title: "Flex Points"
+author: "Stat 331"
+output: rmdformats::readthedown
+---
+
+## Guidelines
+
+Flex Points are worth **5%** of your total grade.  Your final score will be taken out of a maxiumum of **100 points**.
+
+There are many ways to achieve Flex Points - you need not do all or even most of these to reach a total of 100.  
+
+Submit your flex points, with evidence, using [this form](https://forms.gle/Yjn7NzhiY6YmrsXZA).
+
+If you have questions about your flex points, or you would like to lobby for an additional flex point category, email kelly.bodwin+stat331+flex@gmail.com
+
+## Course Extras
+
+* **Complete Bonus Activities on your lab assignments** (variable points)
+
+*Most lab assignments will include an extra challenging section.  These sections are optional, but will be worth 5-20 flex points.*
+
+* **Answer (correctly) a classmate's question on the course forum** (2 points)
+
+
+## Engagement in the Broader R Community
+
+* **Attend a stat department colloquium talk** (10)
+
+*Department colloquia are typically announced by email to the Statistic mailing list.  I will do my best to post them on Canvas as well.*
+
+
+* **Ask an R-related question on Stack Overflow** (5)
+
+[Stack Overflow](https://stackoverflow.com/) *is a website for people to answering each other's questions about coding.  For Flex Credit, your question must get at least 3 upvotes and one answer from someone outside the class.  Make sure you read about how to ask a good question before posting.*
+
+* **Answer an R-related question on Stack Overflow** (10)
+
+*For Flex Credit, your answer must get at least 3 upvotes or be chosen by the asker, who must be someone outside the class.*
+
+
+* **Get a tweet "liked" or replied to by an RStudio employee or similar verified account** (5)
+
+*Much of the statistical computing community is active on twitter!  Check out the #rstats tag.  To get this Flex Credit, you must have a genuine tweet about R - not a tweet that says "my professor will give me credit if you retweet this".  If you solicit your "like" directly from the individual, it is an automatic penalty of minus 50 Flex Points.*
+
+

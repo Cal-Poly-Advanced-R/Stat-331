@@ -1,0 +1,343 @@
+---
+title: "Special Data Types"
+author: "Stat 331"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(tidyverse)
+library(lubridate)
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+solarized_light()
+```
+---
+class: center, middle
+# Setup
+
+Find your R Markdown file where you cleaned the dataset `colleges.csv` and rerun your code to create `colleges_clean`.
+
+Alternatively, start a new R Markdown file, and load in the dataset `colleges_clean.csv`, which is posted on Canvas.
+
+
+---
+class: center, middle
+# Factors
+
+<img src="https://ih1.redbubble.net/image.329889705.2507/st%2Csmall%2C215x235-pad%2C210x230%2Cf8f8f8.u1.jpg" width=300>
+
+---
+
+# Factors
+
+Common tasks:
+
+* Turn a `character` or `numeric` into a factor
+
+* Make a factor by "binning" a numeric variable
+
+* Rename or reorder the `levels` of a factor
+
+
+The packages `forcats`  ("for categoricals") gives nice shortcuts for manipulating categorical variables.
+
+
+(`forcats` loads with the `tidyverse`)
+
+---
+# Turn to factor
+
+```{r}
+x <- c("apple", "dog", "banana", "cat", "banana", "Queen Elizabeth", "dog")
+
+x
+
+x <- factor(x)
+
+x
+
+```
+
+
+---
+# Recoding
+
+```{r}
+x <- fct_recode(x, fruit = "apple", fruit = "banana", pet = "dog", pet ="cat")
+
+x
+```
+
+---
+# `case_when()`
+
+A catchall shortcut for making categorical variables is `case_when`.
+
+```{r}
+iris %>%
+  mutate(
+    Flower.Size = case_when(
+      Sepal.Length < 5 ~ "Small",
+      Sepal.Length > 6 ~ "Large",
+      TRUE ~ "Medium"
+    )
+  ) %>%
+    select(Sepal.Length, Flower.Size)
+```
+
+---
+# Try the following.  What did it do?
+
+```{r, eval = FALSE}
+
+colleges_clean <- 
+  colleges_clean %>%
+  mutate(
+    CONTROL = factor(CONTROL),
+    Type = fct_recode(CONTROL, Public = "1", Private = "2")
+  )
+  
+
+```
+
+---
+# Forcats
+
+We will not practice every single function in the `forcats` package.
+
+Find the `forcats` "cheatsheet" at https://resources.rstudio.com/rstudio-developed/factors
+
+Use it to answer the following (in the Google doc!):
+
+* What is the difference between `fct_relevel()` and `fct_recode()`?
+
+* What is the difference between `fct_collapse()` and `fct_lump()`?
+
+* What is the difference between `fct_reorder()` and `fct_inorder()`?
+
+*Hint: Make up a couple of factors, and see what happens when you use these functions on them.*
+
+---
+class: center, middle
+
+# YOUR TURN
+
+## Adjust the `REGION` variable to be nicer.
+
+
+---
+class: center, middle
+# Strings
+
+<img src="https://stringr.tidyverse.org/logo.png" width=300>
+
+---
+
+# Strings
+
+A **string** is a bunch of **characters**.
+
+Don't confuse a **string** (many characters, one object) with a **character vector** (vector of strings)
+
+
+```{r}
+my_string <- "Hi, my name is Kelly!"
+
+my_vector <- c("Hi", "my", "name", "is", "Kelly")
+
+my_string
+
+my_vector
+```
+
+---
+# Strings
+
+Common tasks:
+
+* Find which strings contain a particular pattern
+
+* Remove or replace a pattern
+
+* Edit a string (for example, make it lowercase)
+
+
+The packages `stringr` is very useful for strings!
+
+(`stringr` loads with the `tidyverse`)
+
+---
+
+# Find patterns
+
+```{r}
+my_vector <- c("Hi there", "my name is", "Kelly Bodwin")
+
+str_detect(my_vector, "Kelly")
+str_locate(my_vector, "Kelly")
+str_extract(my_vector, "Kelly")
+str_subset(my_vector, "Kelly")
+```
+
+---
+
+# Replace/Remove patterns
+
+
+```{r}
+my_vector <- c("Hi there", "my name is", "Kelly Bodwin")
+
+str_remove(my_vector, "Kelly")
+str_replace(my_vector, "Kelly", replacement = "George")
+```
+
+---
+
+# Make edits
+
+```{r}
+my_string <- "Hi, my name is Kelly!"
+
+str_to_lower(my_string)
+str_to_upper(my_string)
+```
+
+---
+# Your Turn
+
+Using your `colleges_clean` dataset... 
+
+* How exactly does Cal Poly's name appear in this dataset?
+
+* **(hard!)** How many colleges have the word "University" in their name?
+
+* **(harder!)** What is Harvard's out of state tuition?
+
+
+Hint:  Remember that the `str_*` functions need the first argument to be a **vector of strings**, not a **dataset**.  You might want to use them *inside* functions like `filter` or `mutate`
+
+
+```{r, include = FALSE, eval = FALSE}
+colleges_clean$INSTNM %>%
+  str_subset("Polytechnic")
+```
+
+
+```{r, include = FALSE, eval = FALSE}
+colleges_clean %>%
+  mutate(
+    is_univ = str_detect(INSTNM, "University")
+  ) %>%
+  count(is_univ)
+```
+
+
+
+```{r, include = FALSE, eval = FALSE}
+colleges_clean %>%
+  mutate(
+    is_harv = str_detect(INSTNM, "Harvard")
+  ) %>%
+  filter(is_harv) %>%
+  select(TUITIONFEE_OUT)
+```
+---
+# More stringr
+
+Refer to the `stringr` cheatsheet:  https://stringr.tidyverse.org/
+
+* What is the difference between `str_detect()` and `str_match()`?
+
+* What is the difference between `length()` and `str_length()`?
+
+* What is the difference between `str_replace()` and `str_replace_all()`?
+
+---
+class: center, middle
+# Dates
+
+<img src="https://pbs.twimg.com/media/CQ6A-NdWwAAncW-.png" width=300>
+
+---
+
+# Dates
+
+Common tasks:
+
+* Convert a date-like variable ("April 2, 1989") to a special DateTime Object.
+
+* Find the weekday, month, year, etc from a DateTime object
+
+* Convert between timezones
+
+--
+
+The package `lubridate` is **AMAZING** for this. 
+
+If you work with dates often, please explore the functions - we are happy to help you after the workshop!
+
+
+(`lubridate` does **NOT** load with the `tidyverse`)
+
+---
+# lubridate
+
+Reference the `lubridate` cheatsheet: https://evoldyn.gitlab.io/evomics-2018/ref-sheets/R_lubridate.pdf
+
+Answer the following using code (even if you know the answer already).
+
+1. Save your birthday as a Datetime object in R.  
+
+```{r, include = FALSE}
+bday <- make_date(year = 1989, month = 04, day = 02)
+```
+
+
+2. What day of the week does/did your birthday fall on in 2020?
+
+```{r, include = FALSE}
+bday2 <- bday
+year(bday2) <- 2020
+bday2 %>% wday(label = TRUE)
+```
+
+3. On what day of the week should you plan your 100th birthday party?
+
+```{r, include = FALSE}
+(bday + years(100)) %>% wday(label = TRUE)
+```
+
+4. Find the date that is exactly 9 months before your birthday.  If it falls on a holiday, think about the implications.
+
+```{r, include = FALSE}
+bday - months(9)
+```
+
+---
+# Zodiac
+
+The dataset `zodiac.csv ` on Canvas gives the date ranges for the 12 Zodiac signs.  By making appropriate adjustments and calculations, find your Zodiac sign.
+
+```{r, include = FALSE, eval = FALSE}
+zodiac <- read.csv("../Data/zodiac.csv")
+
+zodiac %>% separate(Dates, into = c("Start", "End"), sep = "-") %>%
+  mutate(
+    Start = parse_date_time(Start, order = "md"),
+    End = parse_date_time(End, order = "md")
+  ) %>%
+  filter(bday2 >= Start, bday2 <= End)
+
+```
+
+---

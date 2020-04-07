@@ -1,0 +1,27 @@
+Questions to Ponder During Class Demo
+
+How many students have filled out the survey so far?
+
+
+What possible issues do you see with the way your survey data was stored in the dataset `survey_orig`?
+
+
+Why do you think we might have made a new dataset, `free_response`?
+
+
+Explain in words what is different about the dataset `survey` as compared to `survey_orig`.
+
+
+What did you learn about majors and minors of 331 students?
+
+
+Look at `survey_courses_1` and `survey_courses_2`.  Explain the difference between these. Why might we want two different formats for the same data?
+
+
+What did you learn about coursework and majors?
+
+
+What did you observe about the opinions of Cal Poly students over their course of study?
+
+
+What other fun things did you find in this data?

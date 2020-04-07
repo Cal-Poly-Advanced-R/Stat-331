@@ -1,0 +1,146 @@
+---
+title: "Practice Activity 2: Objects and subsetting"
+author: "YOUR NAME HERE"
+date: "January 13, 2019"
+output: html_document
+---
+
+Today you will be creating and manipulating vectors, lists, and data frames to uncover a top secret message.
+
+## Part One: Dealing with errors
+
+This section will create a few objects for you to use in Part Two.  
+
+Alas, each of the following R chunks will cause an error and/or do the desired task incorrectly.  You will need to find the mistake, and correct it, to complete the intended action. 
+
+### Advice for dealing with errors
+
+**Errors can be sneaky - check results often** 
+
+If a chunk of code runs smoothly without giving you any error or warnings this does not necessarily mean it accomplished the desired task.
+
+It is a good habit to check the results of your code every time you finish a task.
+
+* In the text before the code chunk, make sure to briefly state what the point of the chunk is.  This will remind later readers - which might be your future self! - what the desired output is.
+
+* If you created a new object, take a look at it, either by clicking its name in your *Environment* tab or by typing its name into the console.  Make sure it looks about how you expect.
+
+* If you created or updated a data frame, make sure your edits did what you hoped.  Use the *Environment* or the `head()` function to investigate your changes.
+
+
+**Two heads are better than one**
+
+It can be hard to spot bugs in code that you wrote.  
+
+Work with those around you - if something goes wrong, ask a friend to take a peek at your code and see if any glaring errors (like *syntax error*) pop out.
+
+**Explain your code out loud**
+
+The best way to troubleshoot a sneaky but is to explain out loud each step of your code, and what you hoped to accomplish.
+
+If you are alone, try [Rubber Duck Debugging](https://en.wikipedia.org/wiki/Rubber_duck_debugging)!
+
+**Google is your friend**
+
+The whole of the internet is at your disposal!  Use it early, use it often.
+
+Some tricks:
+
+* Copy-paste the exact error message into Google. Chances are, somebody else had a similar problem and got a similar message.
+
+* Include package names in your search terms.  For example, "bar plot in ggplot" is a better search than "bar plot in R".
+
+
+### Fix these steps
+
+1. Create vectors containing the upper case letters, lower case letters, and some punctuation marks.
+
+```{r}
+lower_case <- c("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z")
+
+upper_case <- c("A", "B", "C", "D", "E", "F", "G", "H" "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z")
+
+punctuation <- c(".", ",", "!", "?", "'", """, "(", ")", " ", "-", ";", ":")
+
+```
+
+2. Make one long vector containing all the symbols.
+
+```{r}
+
+my_symbols <- cbind(lower_case, upper_case, punctuation)
+
+```
+
+3. Turn the `my_symbols` vector into a data frame, with the variable name `Symbol`
+
+```{r}
+my_symbols <- dataframe(my_symbols)
+names(my_symbols) <- Symbol
+```
+
+
+4. Find the total number of symbols we have in our data frame.  
+
+```{r}
+len <- length(my_symbols)
+```
+
+
+5. Create a new variable in your dataframe that assigns a number to each symbol.
+
+```{r}
+my_symbols%Num <- 1:len
+```
+
+## Part Two: Decoding the secret message.
+
+You should now be read to decode the message.  Run this chunk to load up the encoded secret message as a vector:
+
+```{r}
+
+top_secret <- read.csv("https://raw.githubusercontent.com/kbodwin/STAT-331/master/In-Class%20Activities/2_Secret_Code?token=AVHCwR08vI1TB2BJE1euD15U1SD18E6pks5cP7F7wA%3D%3D", header = FALSE)$V1
+
+```
+
+By altering this top secret set of numbers, you will be able to create a message.  Write your own code to complete the steps below.  Each step should be a separate code chunk.  
+
+At each step, you should be updating the vector `top_secret`, rather than creating many new vectors.  If you make a mistake, simply reload the data and run each chunk in order to catch back up.
+
+Make sure you check in at each *Checkpoint* step as well, to see if you are on track.
+
+1. Add 14 to every number.
+2. Multiply every number by 18, then subtract 257.
+3. Exponentiate every number.  (That is, do e^[number].  You may have to Google this!)
+4. Square every number.
+
+**Checkpoint:** Headquarters has informed you that at this stage of decoding, there should be 352 numbers in the secret message that are below 17.
+
+5. Turn your vector of numbers into a matrix with 5 columns.
+6. Separately from your top secret numbers, create a vector of all the even numbers between 1 and 382. Name it "evens". That is, "evens" should contain 2, 4, 6, 8 ..., 382.
+7. Subtract the "evens" vector from the first column of your secret message matrix.
+8. Subtract 100 from all numbers 18-24th rows of the 3rd column.
+9. Multiply all numbers in the 4th and 5th column by 2.
+10. Turn your matrix back into a vector.
+
+**Checkpoint:** Headquarters has informed you that at this stage of decoding, all numbers in indices 500 and beyond are below 100.
+
+
+11. Take the square root of all numbers in indices 38 to 465.
+12. Round all numbers to the nearest whole number.
+13. Replace all instances of the number 39 with 20.
+
+**Checkpoint:** Headquarters has informed you that your final message should have 344 even numbers.
+
+
+## Part 3: The secret message!
+
+Run the code chunk below to decode your message.
+
+```{r}
+paste(my_symbols[top_secret], collapse = ""))
+```
+
+
+Google the first line of this message, if you do not recognize it, to see what it is. Submit your answer to the PA 2 assignment on Canvas.
+

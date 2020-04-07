@@ -1,0 +1,152 @@
+---
+title: "Lab 6: Bootstrapping"
+author: "Stat 331"
+output: rmdformats::readthedown
+---
+
+This lab concerns data about salaries in San Francisco.  The dataset, and corresponding information, can be found at [https://www.kaggle.com/kaggle/sf-salaries](https://www.kaggle.com/kaggle/sf-salaries).  We will be using a smaller version of the dataset for this lab - you can find this data as `SF_Salaries_sub.csv` on Canvas.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(include = FALSE, eval = FALSE, echo = FALSE)
+```
+
+## The data
+
+1. Import the data.  Hints:
+
+- If you are using `read.csv()`, you will want to use the option `header = TRUE`
+
+- Missing data in this dataset is labeled `"Not Provided"` or `"Not provided"` or is blank.  You will want to replace these values with `NA`s.  Use the arguments `na.strings` in `read.csv()` or `na` in `read_csv`.
+
+
+2. Our variable of interest for this lab is going to be Total Pay. Plot a histogram of Total Pay with an overlaying density. (Reference Lab 5 if you don't remember how to do this!)
+Comment briefly on the shape, center, and spread.
+
+```{r, message = FALSE}
+
+library(tidyverse)
+
+SF_Salaries <- read_csv("./SF_Salaries_sub.csv", na = c("Not Provided", "Not provided", ""))
+
+
+SF_Salaries %>%
+    ggplot(aes(x = TotalPay, y = ..density..)) +
+    geom_histogram() + geom_density()
+
+```
+
+
+
+3. Suppose we're interested in making inference about the typical salary (Total Pay) of all San Francisco city employees and this is our representative sample. Is the mean a good statistic to use here to describe the typical value of salary? Why or why not?
+
+
+
+4. Recall that a one-sample t-test requires that the sample mean is approximately Normally distributed. Does this assumption seem reasonable for the mean Total Pay? Why or why not? 
+
+
+5. Find a 95% confidence interval for the mean Total Pay using the t distribution.
+```{r}
+t.test(SF_Salaries$TotalPay)
+# (74511.52, 75025.13)
+``` 
+
+
+## Bootstrapping
+6. Use the bootstrap procedure to construct a 95% bootstrap confidence interval for the mean Total Pay. Compare this interval to your t-interval in (3).
+
+```{r}
+set.seed(123)
+
+boots <- replicate(1000, sample(SF_Salaries$TotalPay, size = nrow(SF_Salaries), replace = T), simplify = FALSE)
+
+means <- map_dbl(boots, mean)
+
+quantile(means, probs = c(.025, .975))
+
+```
+
+
+7. Since the distribution of Total Pay is so skewed, there may be other statistics that are better at describing the typical salary. Write your own function for calculating the following two statistics.  (You may have to Google what they mean!  Feel free to use relevant code from previous labs.)
+
+- Midhinge
+
+- Trimmed Mean (this should take two arguments: the data vector and the percent to trim)
+
+```{r}
+midhinge <- function(data) {
+    q1 <- quantile(data, probs = .25)
+    q3 <- quantile(data, probs = .75)
+    val <- (q1 + q3)/2
+    return(val)
+}
+
+trimmed_mean <- function(data, trim) {
+    
+    t1 <- quantile(data, probs = trim)
+    t3 <- quantile(data, probs = 1-trim)
+    
+    data <- data[data > t1 & data < t3]
+  
+    val <- mean(data)
+    return(val)
+}
+```
+
+8. Perform the bootstrap procedure and produce histogram + density graphs of the distributions of:
+
+- Midhinge
+
+- 5% Trimmed Mean
+
+- 10% Trimmed Mean
+
+- 25% Trimmed Mean
+
+- Median
+
+```{r}
+
+my_stats <- data.frame(
+  midhinge = map_dbl(boots, midhinge),
+  trim_5 = map_dbl(boots, ~trimmed_mean(.x, 0.05)),
+  trim_10 = map_dbl(boots, ~trimmed_mean(.x, 0.10)),
+  trim_25 = map_dbl(boots, ~trimmed_mean(.x, 0.25)),
+  median = map_dbl(boots, median)
+  )
+
+
+my_stats %>% gather(key = "Statistic", value = "Value") %>%
+  ggplot(aes(x = Value)) + geom_histogram(bins = 100) + facet_wrap(~Statistic)
+
+my_stats %>% gather(key = "Statistic", value = "Value") %>%
+  ggplot(aes(x = Value, fill = Statistic)) + geom_density(alpha = 0.3)
+                           
+
+```
+
+
+
+9. Compute 95% bootstrap confidence intervals for the statistics listed in (8). For each, compare to your interval to the interval for the *mean* that you computed first. 
+
+```{r}
+map(my_stats, ~quantile(.x, c(.025, .975)))
+
+
+```
+
+
+10. Which of these statistics do you think is the best statistic to describe the typical salary?  Why?  *(There is no single write answer to this question.  Think about what each statistic is measuring, and decide whether that makes sense for this data.)
+
+
+## Flex Points
+
+What is a typical rate of overtime pay?  That is, if `Overtime Pay = X*Regular Pay`, what do you think `X` is equal to?
+
+For 10 Flex Points, answer this question using linear models in R.  Be sure to include a plot and a discussion. 
+
+For 10 additional Flex Points, use bootstrapping to estimate the significance of the model.
+
+For another 10 additional Flex Points, use `modelr`, or your method of choice, to perform a cross-validation study of your linear model.
+
+Submit your writeup to Canvas.
+

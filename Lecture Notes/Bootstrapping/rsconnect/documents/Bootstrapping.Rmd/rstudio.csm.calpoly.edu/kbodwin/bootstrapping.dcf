@@ -1,0 +1,12 @@
+name: bootstrapping
+title: Bootstrapping
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 91
+bundleId: 185
+url: https://rstudio.csm.calpoly.edu/content/91/
+when: 1583178376.65751
+asMultiple: FALSE
+asStatic: TRUE

@@ -1,0 +1,12 @@
+name: text_analysis
+title: Text_Analysis
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 83
+bundleId: 172
+url: https://rstudio.csm.calpoly.edu/content/83/
+when: 1581363853.67598
+asMultiple: FALSE
+asStatic: TRUE

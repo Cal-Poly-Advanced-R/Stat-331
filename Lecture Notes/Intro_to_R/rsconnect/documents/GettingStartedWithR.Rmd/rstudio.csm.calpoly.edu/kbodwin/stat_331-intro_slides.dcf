@@ -1,0 +1,13 @@
+name: stat_331-intro_slides
+title: Stat_331-Intro_Slides
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 59
+bundleId: 136
+url: https://rstudio.csm.calpoly.edu/Intro_Slides/
+when: 1578347007.79793
+asMultiple: FALSE
+asStatic: FALSE
+additionalFiles: appforthat.jpg

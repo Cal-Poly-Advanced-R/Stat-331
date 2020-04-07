@@ -1,0 +1,301 @@
+---
+title: "From Data to Deliverable"
+subtitle: "Day 1"  
+author: "Hunter Glanz & Kelly Bodwin"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(tidyverse)
+library(demoR)
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+solarized_light()
+```
+---
+class:center,middle,invert
+
+# Grouping and summarizing
+---
+# `group_by`
+
+* Last module, we learned how to use the `summarize` functions to get information.
+* What if you want to summarize your data within categories?
+
+```{r}
+iris %>%
+  group_by(Species) %>%
+  summarize(mean(Sepal.Length))
+
+```
+---
+# Try it!
+
+* Find the average calories per cereal for each manufacturer.
+
+* Find the average sugar per cereal for hot and cold cereals.
+
+---
+class:center,middle,invert
+# Reshaping
+---
+# Reshaping
+
+* Note that the `cereals` dataset has separate columns for each nutritional item (`calories`, `sugar`, etc.)
+
+* What if we want to make a plot comparing some of these measures?
+
+```{r, eval = FALSE}
+ggplot(cereals, aes(x = ...????))
+
+```
+---
+# Tidy Data
+
+![](https://d33wubrfki0l68.cloudfront.net/6f1ddb544fc5c69a2478e444ab8112fb0eea23f8/91adc/images/tidy-1.png)
+---
+
+# Gathering/pivoting
+
+```{r}
+
+iris %>%
+  gather(key = "Flower.Part", value = "Size", -Species)
+
+```
+---
+# Gathering/pivoting
+
+Why `-Species`?
+
+```{r}
+
+iris %>%
+  gather(key = "Flower.Part", value = "Size")
+
+```
+
+---
+class: middle
+# Alert:
+## `gather()` will be renamed to `pivot_long` in the next `tidyverse` relase
+## (Plus lots of other handy pivoting.)
+---
+# Try it!
+
+Create a new dataset called `cereals_3`, that has three columns:
+* The name of the cereal
+* A column called "Nutrient" with values `protein`, `fat`, or `fiber`.
+* A column called "Amount" with the corresponding amount of the nutrient.
+
+---
+# Spread/pivot_wide
+
+What about the reverse reshaping?
+
+```{r, echo = FALSE}
+iris_long <- iris %>%
+  mutate(Flower.ID = 1:150) %>%
+  gather(key = "Flower.Part", value = "Size", -Species, -Flower.ID)
+
+iris_long
+```
+
+---
+# Spread/pivot_wide
+
+```{r}
+iris_long %>%
+  spread(Flower.Part, Size)
+```
+
+---
+# Quick quiz
+
+* Why did I need to add the "Flower.ID" column?
+
+---
+# Quick quiz
+
+* Why did I need to add the "Flower.ID" column?
+
+```{r, error = TRUE}
+iris_long %>%
+  select(-Flower.ID) %>%
+  spread(Flower.Part, Size)
+```
+
+---
+class:center,middle,invert
+# Prettifying your plots
+---
+# Tips
+
+* Google is your friend!  Explore what other people have done.
+* [https://www.r-graph-gallery.com/](https://www.r-graph-gallery.com/)
+* [http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html](http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html)
+* Multiple layers to the plot
+* Look for the `+theme_` options
+* Don't forget to think about colorblindness
+---
+```{r, fig.height = 5}
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width)) +
+  geom_point()
+```
+---
+```{r, fig.height = 5, warning = FALSE}
+library(ggforce)
+
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+  geom_point() +
+  stat_ellipse() +
+  ggtitle("Yay! Irises!") + 
+  theme_light()
+```
+
+---
+class:center,middle,invert
+# Polishing and sharing your output
+---
+
+# Principles of Reproducibility
+
+The idea:  You should be able to send your project to someone else, and they can jump in and start working right away.
+
+1. Files are organized and well-named.
+2. References to data and code work for everyone. (Projects!)
+3. Package dependency is clear.  (`library`)
+4. Code will run the same every time, even if data values change.
+5. Analysis process is well-explained and easy to read.
+
+---
+# Bad practice
+
+If you put something like this at the top of your .Rmd file, I will set your computer on fire:
+
+```{r setwd, eval = FALSE}
+setwd("/User/kbodwin/Dropbox/Teaching/331/Data/")
+```
+
+- Setting working directory by hand = BAD!  
+- That directory is specific to you!  Where should someone else look for the data?
+- Markdown files won't knit this code.
+
+---
+class: center, middle
+# Dealing with packages
+
+---
+
+## install.packages()
+
+To use a package, it must first be *installed* to your copy of RStudio.
+
+This only needs to happen **ONCE** per computer or server.
+
+```{r install packages, eval = FALSE}
+install.packages("tidyverse")
+```
+
+---
+
+# update.packages()
+
+If a computer you are using has the package, but you aren't sure if it's up to date:
+
+```{r update packages, eval = FALSE}
+update.packages("tidyverse")
+```
+
+to install the most recent version.
+
+# NEVER EVER EVER EVER PUT "install.packages" or "update.packages" INTO YOUR MARKDOWN FILE!!!!!
+
+---
+
+# library() and require()
+
+- A package must only be *installed* once.
+- But it must be *loaded* every time, to tell R it is needed for this particular analysis.
+- `library` gives an **error** if the package isn't installed
+- `require` gives a `TRUE/FALSE` value depending on if the package was available
+- For now, you should always use `library`
+
+```{r library, eval = FALSE}
+library(tidyverse)
+
+# notice:  no quotes around package name
+```
+
+
+---
+class: center, middle
+
+# Deliverables in Markdown
+
+---
+# General principles
+
+- Give your file a good title, author, and date
+- Name your file something meaningful (match the title!)
+- Use `#` to make section headings etc.  (see cheatsheet)
+- Each code chunk is a unified thought.
+- Text before and after each code chunk to motivate your code and explain the output.
+- Make deliberate decisions about what to display:
+    + Does the reader need to see data loading step?
+    + Does the reader need to see your code?
+    + Does the reader need to see the output?
+ 
+---   
+# Naming code chunks
+
+- Lets you jump between chunks - see demo.
+- Careful with copy-pasting, duplicate names are not allowed.
+
+---
+
+# Setting chunk options
+
+- `echo`: Should this code be **shown** (echoed)?
+- `eval`: Should this code be **run** (evaluated)?
+- `include`: Should this code be neither shown nor run?
+- `error`: If there is an error, should that display rather than breaking the knit?
+- `warning`: If there is a warning, should that display?
+- `message`: If there is a message, should that display?
+
+---
+## Setting options for ALL chunks
+
+What does this do?
+
+```{r global_options, eval=FALSE}
+knitr::opts_chunk$set(fig.width=6, fig.height=4,
+                      echo=TRUE, warning=FALSE, 
+                      message=FALSE, eval=TRUE)
+```
+
+
+- (you can always override these for individual chunks)
+
+---
+class: center, middle, invert
+
+# YOUR TURN
+---
+class: center, middle
+
+## In the `\data\` folder, you will find a dataset called `wine_dataset`. 
+
+## Create a beautiful presentation in R Markdown that addresses the questions:  
+* How do chemical qualities differ between red and white wines?
+* What qualities lead to wines being rated well?

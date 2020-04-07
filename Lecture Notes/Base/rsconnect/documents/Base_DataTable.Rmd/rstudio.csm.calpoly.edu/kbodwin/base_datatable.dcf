@@ -1,0 +1,12 @@
+name: base_datatable
+title: Base_DataTable
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 76
+bundleId: 161
+url: https://rstudio.csm.calpoly.edu/content/76/
+when: 1580757364.2827
+asMultiple: FALSE
+asStatic: TRUE

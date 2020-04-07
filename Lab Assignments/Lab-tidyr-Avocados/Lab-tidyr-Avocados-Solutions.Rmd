@@ -1,0 +1,160 @@
+---
+title: "Lab 2: Avocado Prices"
+author: "Stat 331"
+output: rmdformats::readthedown
+---
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, fig.path='Figs/',
+                      echo=TRUE, warning=FALSE, message=FALSE,eval=TRUE, include = TRUE)
+```
+
+
+# Instructions
+
+Submit your .html file to the assignment on Canvas.
+
+I advise you to focus particularly on:
+
+* Setting chunk options carefully.
+
+* Making sure you don't print out more output than you need to.
+
+* Making your code readable and nicely formatted.  (This is the last lab where you will **not** be graded on code style.)
+
+* Thinking through your desired result **before** writing any code.
+
+# Introduction
+
+In this lab we're going to be looking at avocado prices. 
+
+The dataset comes to us from kaggle and represents weekly retail scan data.  It is available to download from Canvas under the name `avocado.csv`.  A description of the data can be found [here.](https://www.kaggle.com/neuromusic/avocado-prices)
+
+```{r, echo = FALSE}
+library(tidyverse)
+avo <- read_csv("https://www.dropbox.com/s/vsc1dkosz6nwake/avocado.csv?dl=1")
+```
+
+0) Create an R Markdown file, load the data, and declare your package dependencies. 
+
+1) Briefly describe the dataset.  What information does it contain?
+
+2) Clean the data in any way you see fit. In particular, look carefully at the `region` variable.  Notice that the category `LosAngeles` is contained in `California`, which is contained in `West`, which is contained in `TotalUS`.  Think about how you want to handle this issue in your analysis.
+
+
+```{r}
+avo <- avo %>%
+  rename(
+    Size_Small = `4046`,
+    Size_Large = `4225`,
+    Size_XL = `4770`)
+
+major_regions <- c("Plains", "Midsouth", "West", "SouthCentral", "Northeast", "Southeast")
+  
+avo_regional <- avo %>%
+  filter(region %in% major_regions)
+
+avo_metro <- avo %>%
+  filter(!(region %in% c(major_regions, "TotalUS")))
+```
+
+
+
+
+# Exercises
+
+
+1) Which major region sold the most organic small Hass avocados in 2017? 
+
+```{r}
+avo_regional %>% 
+  filter(type == "organic") %>%
+  group_by(year, region) %>%
+  summarize(tot_small_bags = sum(Size_Small)) %>%
+  filter(year == 2017) %>%
+  top_n(1, tot_small_bags)
+```
+
+2) Use `separate()` to split the `Date` variable into year, month, and day.  In which month is the highest volume of avocado sales?
+
+```{r}
+avo %>%
+  separate(Date, into = c("Year", "Month", "Day"), sep = "-") %>%
+  group_by(Month) %>%
+  summarize(tot_sales = sum(`Total Volume`)) %>%
+  top_n(1, tot_sales)
+```
+
+
+3) Which metro area regions sold the most total avocados?  Plot side-by-side boxplots of Total Volume for only the 5 regions with the highest averages for the Total Volume variable. 
+
+```{r}
+top5reg <- avo_metro %>%
+    group_by(region) %>%
+    summarize(avgtotvol = mean(`Total Volume`)) %>%
+    arrange(desc(avgtotvol)) %>%
+    slice(1:5) %>%
+    pull(region)
+
+avo %>%
+    filter(region %in% top5reg) %>%
+    ggplot(aes(x = region, y = `Total Volume`, fill = region)) +
+    geom_boxplot()
+
+```
+
+# Reshaping
+
+The following four California regions are in this dataset:  LosAngeles, SanDiego, Sacramento, SanFrancisco.  Answer the following questions about the California regions only.  
+
+*Hint: These questions will require restructuring of your data!*
+
+1) In which regions is the price of organic versus conventional avocados most different?  Support your answer with a few summary numbers and a plot.  
+
+```{r}
+cali <- avo %>% 
+  filter(region %in% c("LosAngeles", "SanDiego", "Sacramento", "SanFrancisco"))
+
+cali %>% 
+  ggplot(aes(x = region, y = AveragePrice, fill = type)) + 
+  geom_boxplot() +
+  ggtitle("Prices of Avocados in California Regions")
+
+cali %>% 
+  group_by(region, type) %>%
+  summarize(avg_price = mean(AveragePrice)) %>%
+  spread(key = type, value = avg_price) %>%
+  mutate(
+    price_diff = organic - conventional
+  )
+  
+```
+
+2)  The following plot shows, for all 4 California regions, the percent of Hass avocado sales that are small, large, or extra large; conventional vs. organic.  Recreate the plot.
+
+
+```{r, include = TRUE}
+cali %>% 
+  group_by(region, type) %>%
+  summarize_at(vars(Size_Small, Size_Large, Size_XL), funs(mean)) %>%
+  gather(key = Size, value = Num.Sold, -region, - type) %>%
+  mutate(
+    Size = factor(Size, 
+                  levels = c("Size_Small", "Size_Large", "Size_XL"),
+                  labels = c("Small", "Large", "Extra Large"))
+  ) %>%
+  ggplot(aes(x = region, y = Num.Sold, fill = Size)) +
+  geom_col(position = "fill") + facet_wrap(~type)
+
+
+```
+
+
+
+# Flex Points
+
+A joke in the media is that Millenials can't afford houses, because they spend all their money buying avocado toast.  Let's use this dataset to address that claim.
+
+Find or make a dataset with house prices for the California regions.  Join this dataset with your avocado data.  Use your new large dataset to make an argument about the relationship between house prices and avocado prices/sales.  Support your argument with a plot.
+
+This section is worth up to **20 Flex Points**.  It should be submitted as a **separate html file** to the "Lab 2 Flex" assignment.

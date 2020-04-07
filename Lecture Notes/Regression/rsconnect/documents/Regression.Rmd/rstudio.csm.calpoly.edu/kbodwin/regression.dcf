@@ -1,0 +1,12 @@
+name: regression
+title: Regression
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 93
+bundleId: 191
+url: https://rstudio.csm.calpoly.edu/content/93/
+when: 1583352289.2211
+asMultiple: FALSE
+asStatic: TRUE

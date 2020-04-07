@@ -1,0 +1,258 @@
+---
+title: "Basics"
+subtitle: "Day 2"  
+author: "Stat 331"
+
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(tidyverse)
+library(flair)
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+solarized_light()
+```
+
+class: center, middle
+
+# Functions
+
+---
+# Important R Facts
+
+*Fact 1:* **R** is an **open-source** language.
+
+--
+
+*Fact 2:* The power of **R** comes from **packages**.
+
+--
+
+*Fact 3:* **R** is a **functional programming** language.
+
+--
+
+(This means it is designed for using and writing *functions*.)
+
+---
+# Anatomy of a function
+
+```{r rnorm1}
+rnorm(10, mean = 5, sd =3)
+```
+
+---
+# Anatomy of a function
+
+```{r rnorm, eval = FALSE}
+rnorm(10, mean = 5, sd =3)
+```
+
+--
+Function name:
+
+```{r, echo = FALSE}
+flair_chunk("rnorm", eval = FALSE) %>%
+  hlt_quick("rnorm")
+```
+
+--
+
+Required arguments:
+
+
+```{r, echo = FALSE}
+flair_chunk("rnorm", eval = FALSE) %>%
+  hlt_quick("10")
+```
+
+(we often don't use the names for required arguments, but `n = 10` would be okay too)
+
+--
+
+Optional arguments:
+
+
+```{r, echo = FALSE}
+flair_chunk("rnorm", eval = FALSE) %>%
+  hlt_quick("mean = 5") %>%
+  hlt_quick("sd = 5")
+```
+
+(*always* use the argument names for optional arguments)
+
+---
+class: center, middle
+
+# Troubleshooting Errors
+
+---
+
+# Syntax Errors
+
+* Did you leave off a parenthesis?
+
+```{r, echo = FALSE}
+flair_code('rnorm(10, mean = 5', eval = FALSE) %>%
+  hlt_fixed("(")
+```
+
+```{r, echo = FALSE, error = TRUE}
+
+rnorm(10, mean = 5
+
+```
+
+
+---
+
+# Syntax Errors
+
+* Did you leave off a comma?
+
+```{r, echo = FALSE, error = TRUE}
+flair_code('rnorm(10 mean = 5)', eval = FALSE) %>%
+  hlt_quick(" mean")
+```
+
+```{r, echo = FALSE, error = TRUE}
+
+rnorm(10 mean = 5)
+
+```
+
+
+---
+
+# Syntax Errors
+
+* Did you make a typo?
+
+
+```{r, echo = FALSE}
+flair_code('rnrom(10, mean = 5)', eval = FALSE) %>%
+  hlt_fixed("rnrom")
+```
+
+```{r, echo = FALSE, error = TRUE}
+
+rnrom(10, mean = 5)
+
+```
+
+---
+# Object type errors
+
+* Are you using the right **input** that the function expects?
+
+```{r, echo = FALSE}
+flair_code("rnorm('hi', mean = 5)", eval = FALSE) %>%
+  hlt_fixed("'hi'")
+```
+
+```{r, echo = FALSE, error = TRUE}
+
+rnorm('hi', mean = 5)
+
+```
+
+---
+# Object type errors
+
+* Are you expecting the right **output** of the function?
+
+```{r, echo = FALSE}
+flair_code("my_obj <- rnorm(10, mean = 5) \n my_obj(5)", eval = FALSE) %>%
+  hlt_fixed("my_obj(5)")
+```
+
+```{r, echo = FALSE, error = TRUE}
+
+my_obj <- rnorm(10, mean = 5)
+
+my_obj(5)
+
+```
+
+---
+class: center, middle
+# Object and Data Types
+
+---
+
+# Object Types
+
+Is your object a...
+
+* function?
+
+* vector?
+
+* list?
+
+* data frame?
+
+* matrix?
+
+---
+# Data Types
+
+Does your data consist of...
+
+--
+
+* numbers?
+    + integers?
+    + doubles?
+    
+--
+
+* words?
+    + characters/string?
+    + factor?
+    
+--
+
+* something else???
+
+---
+class: center, middle
+# (Fill in the grid activity)
+
+---
+
+class: center, middle
+
+# R Markdown
+
+---
+# R Markdown
+
+**R Markdown** is an *editor*.  (Like MS Word!)
+
+It is built for combining **code chunks** with text.
+
+--
+
+Like any text document, you should **save** as you work!
+
+--
+
+When you are ready to see the finished product, you should **knit** your file.
+
+---
+
+class: center, middle
+
+# Let's try it!

@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Writing your own functions</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Stat 331" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Writing your own functions
+### Stat 331
+
+---
+
+
+
+
+
+
+# Since the Beginning
+
+* Functions allow you to automate common tasks in a more powerful and reproducible way than copy-and-pasting
+
+--
+
+  * Case in point, we've been using functions since Day 1
+  
+  * Data wrangling, visualizations, summaries...all things we do OFTEN
+  
+--
+
+* Writing your OWN functions has 3 big advantages over copy-and-paste:
+
+1. You can give a function an informative name that makes your code easier to understand
+
+2. As requirements change, you only need to update code in one place, instead of many
+
+3. You eliminate the chance of making incidental mistakes when you copy and paste
+
+---
+
+# A simple function
+
+
+```r
+add_two &lt;- function(x) {
+  
+  x + 2
+  
+}
+
+add_two(5)
+```
+
+```
+## [1] 7
+```
+
+`x` is a placeholder!
+
+whatever is entered in the function is passed along under the name "x".
+---
+
+# A simple function
+
+The **name** of the function (chosen by you!)
+
+
+&lt;code class ='r hljs remark-code'&gt;&lt;span style='background-color:#ffff7f'&gt;add_two&lt;/span&gt; &lt;- function(x) {&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;br&gt;&amp;nbsp;&amp;nbsp;x + 2&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;br&gt;}&lt;br&gt;&lt;br&gt;&lt;span style='background-color:#ffff7f'&gt;add_two&lt;/span&gt;(5)&lt;/code&gt;
+
+```
+
+## [1] 7
+
+```
+
+---
+# Word of Caution 1
+
+Function names have no inherent meaning.
+
+
+```r
+add_three &lt;- function(x) {
+  
+  x + 7
+  
+}
+
+add_three(5)
+```
+
+What will this give us?
+
+---
+# A simple function
+
+The **argument(s)** of the function (names chosen by you!)
+
+
+&lt;code class ='r hljs remark-code'&gt;add_two &lt;- function(&lt;span style='background-color:#ffff7f'&gt;x&lt;/span&gt;) {&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;x&lt;/span&gt; + 2&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;br&gt;}&lt;br&gt;&lt;br&gt;add_two(5)&lt;/code&gt;
+
+```
+
+## [1] 7
+
+```
+
+---
+# A simple function
+
+The **body** of the function (where the action happens)
+
+
+&lt;code class ='r hljs remark-code'&gt;add_two &lt;- function(x) {&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;span style='background-color:#ffff7f'&gt;x + 2&lt;/span&gt;&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;br&gt;}&lt;br&gt;&lt;br&gt;add_two(5)&lt;/code&gt;
+
+```
+
+## [1] 7
+
+```
+
+---
+class: center, middle, inverse
+
+# Arguments
+
+---
+# Word of Caution
+
+Unless you are very very experienced, do **not** reference outside objects!
+
+
+```r
+add_two &lt;- function() {
+  
+  x + 2
+  
+}
+
+add_two()
+```
+
+```
+## Error in add_two(): object 'x' not found
+```
+
+```r
+x &lt;- 10
+
+add_two()
+```
+
+```
+## [1] 12
+```
+
+---
+# Optional arguments
+
+If you supply a default value, the argument is optional:
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;add_something &lt;- function(x, &lt;span style='background-color:#ffff7f'&gt;something = 2&lt;/span&gt;) {&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;br&gt;&amp;nbsp;&amp;nbsp;x + something&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;br&gt;}&lt;br&gt;&lt;br&gt;add_something(5)&lt;/code&gt;
+
+```
+
+## [1] 7
+
+```
+
+
+
+&lt;code class ='r hljs remark-code'&gt;add_something(5, &lt;span style='background-color:#ffff7f'&gt;something = 6&lt;/span&gt;)&lt;/code&gt;
+
+```
+
+## [1] 11
+
+```
+
+---
+class: center, middle, inverse
+
+# What gets returned
+
+---
+# Returns
+
+Your function will "give back" whatever would normally "print out".
+
+
+```r
+add_something &lt;- function(x, something = 2) {
+  
+  x + something
+  
+}
+```
+---
+# Returns
+
+You can be explict (and clearer) by using `return()`
+
+
+```r
+add_something &lt;- function(x, something = 2) {
+  
+  return(x + something)
+  
+}
+```
+
+---
+# Returns
+
+Objects you make in the function don't affect "real life".
+
+
+```r
+add_something &lt;- function(x, something = 2) {
+  
+  my_result &lt;- x + something
+  
+  return(my_result)
+  
+}
+
+my_result &lt;- 2000
+
+add_something(5)
+```
+
+```
+## [1] 7
+```
+
+```r
+my_result
+```
+
+```
+## [1] 2000
+```
+
+---
+# Conditional returns
+
+Maybe you want to return different results in different situations
+
+
+
+
+&lt;code class ='r hljs remark-code'&gt;even_or_odd &lt;- function(x) {&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;br&gt;&amp;nbsp;&amp;nbsp;if (&lt;span style='background-color:#ffff7f'&gt;x %% 2 == 0&lt;/span&gt;) {&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return("&lt;span style='background-color:green'&gt;It's even!&lt;/span&gt;")&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;br&gt;&amp;nbsp;&amp;nbsp;} else {&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;return("&lt;span style='background-color:pink'&gt;It's odd.&lt;/span&gt;")&lt;br&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;br&gt;&amp;nbsp;&amp;nbsp;}&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;br&gt;&amp;nbsp;&amp;nbsp;&lt;br&gt;}&lt;/code&gt;
+---
+# Print versus return
+
+
+
+```r
+even_or_odd &lt;- function(x) {
+  
+  if (x %% 2 == 0) {
+    
+    return("It's even!")
+    
+  } else {
+    
+    return("It's odd.")
+    
+  }
+  
+  
+}
+
+bob &lt;- even_or_odd(7)
+bob
+```
+
+```
+## [1] "It's odd."
+```
+
+---
+# Print versus return
+
+
+
+```r
+even_or_odd &lt;- function(x) {
+  
+  if (x %% 2 == 0) {
+    
+    print("It's even!")
+    
+  } else {
+    
+    print("It's odd.")
+    
+  }
+  
+  return(x)
+  
+  
+}
+
+bob &lt;- even_or_odd(7)
+```
+
+```
+## [1] "It's odd."
+```
+
+```r
+bob
+```
+
+```
+## [1] 7
+```
+
+---
+
+# Your turn
+
+Write a function called `times_seven()` which takes a single argument and multiplies by 7. 
+
+--
+* What happens when you run this?
+
+
+```r
+my_vec &lt;- c(7, 8, 9)
+
+times_seven(my_vec)
+```
+
+
+* What about this?
+
+
+```r
+times_seven(iris)
+```
+
+---
+class: center, middle, inverse
+
+# Errors
+
+---
+# Errors
+
+
+```r
+add_something &lt;- function(x, something = 2) {
+  
+  if (!is.numeric(something)) {
+    
+    stop("Please enter a number!")
+    
+  }
+  
+  x + something
+  
+}
+```
+
+---
+# Errors
+
+```r
+add_something(5, something = "bob")
+```
+
+```
+## Error in add_something(5, something = "bob"): Please enter a number!
+```
+
+
+---
+
+# Your turn
+
+Write a function called `times_seven()` which takes a single argument and multiplies by 7. 
+
+This function should also excitedly announce "I love sevens!" if the argument to the function is a 7.
+
+--
+* What happens when you run this?
+
+
+```r
+my_vec &lt;- c(7, 8, 9)
+
+times_seven(my_vec)
+```
+
+---
+
+# When should you write a function?
+
+* Consider writing a function whenever you've copied and pasted a block of code more than twice
+
+--
+
+* Consider the following bit of code. What does it do?
+
+
+```r
+myiris &lt;- iris
+
+myiris$Sepal.Length &lt;- (myiris$Sepal.Length - mean(myiris$Sepal.Length)) / sd(myiris$Sepal.Length)
+myiris$Sepal.Width &lt;- (myiris$Sepal.Width - mean(myiris$Sepal.Length)) / sd(myiris$Sepal.Width)
+myiris$Petal.Length &lt;- (myiris$Petal.Length - mean(myiris$Petal.Length)) / sd(myiris$Petal.Length)
+myiris$Petal.Width &lt;- (myiris$Petal.Width - mean(myiris$Petal.Width)) / sd(myiris$Petal.Width)
+```
+
+--
+
+* That's right, this code standardizes each of the variables in `myiris` to have mean 0 and standard deviation 1
+
+--
+
+* ...or does it?
+
+---
+
+# Let's Make This a Function
+
+* Three key steps to creating a function:
+
+1. Pick a **name** for the function: informative and usually a **verb**
+
+2. List the inputs, or **arguments**, of the function inside `function()`
+
+3. Place the code we've developed in the **body** of the function, a `{` block following `function()`
+
+--
+
+
+```r
+standardize &lt;- function(data) {
+  (data - mean(data)) / sd(data)
+}
+
+# OR
+
+standardize &lt;- function(data) {
+  newdata &lt;- (data - mean(data)) / sd(data)
+  return(newdata)
+}
+
+standardize(myiris$Sepal.Length)
+```
+
+---
+
+# Intermediate Steps - Function Building Blocks
+
+
+* Functions can get complex quickly
+
+* It's often a good idea to pull out intermediate calculations into named variables to increase clarity
+
+
+```r
+standardize &lt;- function(data) {
+  deviations &lt;- data - mean(data)
+  newdata &lt;- deviations / sd(data)
+  return(newdata)
+}
+```
+
+---
+
+# Pump The Breaks a Bit
+
+* As exciting as working in R and writing functions can be, testing is **important**
+
+--
+
+* The `iris` data may have worked just fine, but that's about as clean as data can get
+
+--
+
+
+```r
+testdata &lt;- c(2, 4, 3, 9, NA, 4, 6)
+standardize(testdata)
+```
+
+```
+## [1] NA NA NA NA NA NA NA
+```
+
+
+&lt;img src="https://media.giphy.com/media/kwCJA4NGu2PtMzpxGb/giphy.gif" width="40%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## We Only Need to Change the Code in One Place: `standardize()`
+
+
+```r
+standardize &lt;- function(data) {
+  deviations &lt;- data - mean(data, na.rm = TRUE)
+  newdata &lt;- deviations / sd(data, na.rm = TRUE)
+  return(newdata)
+}
+
+testdata &lt;- c(2, 4, 3, 9, NA, 4, 6)
+standardize(testdata)
+```
+
+```
+## [1] -1.0652473 -0.2663118 -0.6657796  1.7310268         NA -0.2663118  0.5326236
+```
+  
+* Much better!
+
+---
+
+# Some of you may be thinking...
+
+&lt;img src="https://media.giphy.com/media/xT77XTpyEzJ4OJO06c/giphy.gif" width="40%" style="display: block; margin: auto;" /&gt;
+
+* We haven't eliminated copy-and-pasting from our `iris` example, right?
+
+--
+
+
+```r
+myiris$Sepal.Length &lt;- standardize(myiris$Sepal.Length)
+myiris$Sepal.Width &lt;- standardize(myiris$Sepal.Width)
+myiris$Petal.Length &lt;- standardize(myiris$Petal.Length)
+myiris$Petal.Width &lt;- standardize(myiris$Petal.Width)
+```
+---
+class: center, middle, inverse
+
+# Scripts
+
+---
+# Scripts
+
+* **R Markdown** files are for **analyses**
+
+    + Text and code and output interspersed
+    + Knits to a beautiful, readable file
+    
+--
+    
+* **R Script** files are for "under the hood" code
+
+    + Functions
+    + Personal settings
+    
+--
+    
+* To use the functions in a script from your `.Rmd` file,
+
+
+```r
+source("path/to/my/scripts/somefunctions.R")
+```
+
+---
+class: center, middle, inverse
+
+# Debugging
+
+---
+
+
+```r
+fibonacci &lt;- function(start, len) {
+  
+  fib &lt;- vector()
+  
+  for (i in 1:len) {
+    
+    fib[i + 1] &lt;- fib[i] + fib[i - 1]
+    
+  }
+  
+  return(fib)
+  
+  
+}
+```
+
+---
+# Debugging tricks
+
+## `print()`
+
+## `browser()`
+
+## `debugonce()`
+
+(Try it.)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,108 @@
+---
+title: "Baby Names"
+author: "YOUR NAME HERE"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(eval = FALSE)
+```
+
+```{r libraries}
+
+```
+
+
+
+# The Data
+
+Our dataset in this lab concerns baby names and their popularity over time.  The dataset `babies_ca` has information about baby names in California from 1940-2016.  For each year, and for each name with at least 50 recorded babies born, we are given the counts of how many babies had that name. 
+
+For now, we will study only the name "Kelly".  First we read in that data:
+
+```{r, include = FALSE}
+
+kellys = read.csv("kellys_ca.txt")
+
+```
+
+
+# Trend in Kellys over time
+
+Let's take a look at how the name "Kelly" has changed over time.  The following code will plot the counts for each year.
+
+```{r plot}
+
+ggplot(kellys, aes(x = Year, y = Count)) + geom_line()
+
+```
+
+
+Trend by Gender
+
+```{r plot}
+
+ggplot(kellys, aes(x = Year, y = Count, color = Gender)) + geom_line()
+
+```
+
+
+# Is my name not cool any more?
+
+I was born in 1989.  Let's look at only the time frame since I was named.
+
+```{r filter}
+kellys_89 <- kellys %>%
+  filter(Year >= 1989)
+```
+
+We will create a linear model with the year as the explanatory variable, and the number of Kellys as the response.
+
+```{r model, echo = FALSE}
+my_model <- lm(Year ~ Count)
+
+summary(my_model)
+```
+
+
+Let's plot this linear model.
+
+```{r plot}
+
+ggplot(kellys_89, aes(x = Year, y = Count)) +
+  geom_point() + 
+  stat_smooth(method = "lm")
+
+```
+
+We should also check out the *residuals*.  
+
+```{r residuals}
+
+kellys_89 %>%
+  add_predictions(my_model) %>%
+  residual = Count - pred
+
+ggplot(kellys_89, aes(x = Year, y = residual)) + geom_point()
+```
+
+
+What about by gender?
+
+```{r gender model}
+my_model_2 <- lm(Count ~ Year*Gender, data = kellys_89)
+
+summary(my_model_2)
+
+ggplot(kellys_89, aes(x = Year, y = Count, color = Gender)) + geom_point() + stat_smooth(method = "lm")
+
+kellys_89 <- add_predictions(my_model_2) %>%
+  mutate(
+    residual = Count - pred
+  )
+
+ggplot(kellys_89, aes(x = Year, y = residual, color = Gender)) + geom_point()
+```
+
+
+## Conclusion

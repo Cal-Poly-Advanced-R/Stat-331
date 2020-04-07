@@ -1,0 +1,197 @@
+---
+title: "Final Project Guidelines"
+author: "Stat 331"
+output: rmdformats::readthedown
+---
+
+
+## Groups 
+
+For this project, you  may work in **Groups of 1-4** people.  The project guidelines are the same regardless of group size; however, I will expect more content from larger groups.  That is, a group of four should turn in a project that takes about 4 times as much work as a group of one.
+
+Once you pick a group, *even if you are working alone*, you must create your group on Canvas.  
+(In the section "People" choose the tab "Group" and click "+Group")
+
+Everyone in a group will recieve the same grade, unless concerns are privately expressed to me about member contribution.
+
+You **may** work with people in other sections.  
+However, note that I will be giving you in-class work time in Week 10, which will be less helpful to groups that do not attend the same section.
+
+## Part One: Vignette [100 points]
+
+This part is due on **Friday, March 13th**.  (i.e., *before* Finals Week)
+
+Every group must hand in a *vignette*, which is a short document describing the purpose and basic functionality of an R package.
+
+[The dplyr vignette](https://cran.r-project.org/web/packages/dplyr/vignettes/dplyr.html) is a nice example.  This length would be appropriate for a 4-person group; a one-person group could cover only a few of the functions in the package.
+
+You may:
+
+  a) [Choose one of the packages discussed here](https://twitter.com/KellyBodwin/status/1230651259599720448?s=20).  
+  b) Propose a package to me for approval.  This package must not have an existing vignette *or* you must justify why the existing vignette is insufficient and should be updated.
+  
+Be sure to comment in the Canvas Forum to claim your package; only one group per section may do the same package.
+  
+**Note** You may find resources on the internet about writing vignettes for R packages.  You should disregard these; you need not formally use official vignette formatting.  You should instead use a simple, unformatted, `html_document`.
+
+## Part Two: Final Deliverable [200 points]
+
+This part is due on **Friday, March 20th**.  (i.e., *at the end of* Finals Week)
+
+### Option A: Data Analysis Article
+
+Your baseline option is to use your skills in the class to perform a formal analysis of a dataset.
+
+
+#### Advice
+
+This analysis should read like a formal article, such as those that appear in pop science journals like [this one](https://www.scientificamerican.com/).
+
+Your analysis should demonstrate your skills from **all three units** of STAT 331.
+
+#### Guidelines
+
+You will turn in to me:
+
+* Your .Rmd source file
+    
+* Your final report in html or pdf form.
+
+
+### Option B: Shiny App [+50 Flex Points]
+
+One of the most exciting features of **R** is the package *Shiny*.  
+
+This package allows users to make fully interactive web applications directly in **R**.
+
+See some examples here: https://shiny.rstudio.com/gallery/
+
+#### Resources
+
+[This site](https://shiny.rstudio.com/tutorial/) has very thorough tutorials.
+
+
+#### Advice
+
+*Shiny* is awesome, and this is the project choice that I would most suggest you choosing, unless you have a strong preference otherwise.
+
+It will take you some extra work to learn how *Shiny* works, and how to build your app.  (Hence the Flex Points!)  However, I think you'll have fun with your results.
+
+#### Guidelines
+
+Your final project submission will consist of two things:
+
+* Upload your completed app to shinyapps.io.  At least one of your group members will need to make an account, so that you can upload your app.
+
+* Submit to Canvas a .zip folder containing all relevant (data and code) files
+
+The app should showcase in some way a data analysis.  This analysis can be less formal, and less complex, than Project A.  However, it should not be trivial, and should demonstrate to me that you have mastered the skills of STAT 331.
+
+
+
+### Option C: A Blogdown Website [+50 Flex Points]
+
+Have you always wanted to make websites to show off your data analysis?
+
+For the very dedicated, now is your chance!
+
+Use the `blogdown` package to make your very own website in **R**!
+
+#### Resources
+
+The resources from [this workshop]([https://summer-of-blogdown.netlify.com/]) will be helpful to you.
+
+
+#### Advice
+
+This project will involve more learning-on-your-own and frustrating troubleshooting than any of the others.
+
+As a reward (in addition to flex points!), you will have a personal website that you have built.
+
+#### Guidelines
+
+You will simply turn in the link to your website.
+
+The site should showcase in some way a data analysis.  This analysis can be less formal, and less complex, than Project A.  However, it should not be trivial, and should demonstrate to me that you have mastered the skills of STAT 331.
+
+
+
+### Option D: An R Package [+50 Flex Points]
+
+Do you have an idea for some functions that you wish existed in **R**, that can make your life easier?
+
+Do you feel like you could write these functions yourself?
+
+Are you feeling ambitious about this project?
+
+Write an **R Package**!
+
+#### Resources
+
+A good place to start learning about packages is [this blog post](https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/), which walks through the basic steps for a simple package.
+
+Further information can be found at [http://r-pkgs.had.co.nz/](http://r-pkgs.had.co.nz/).  Note, though, that this book will contain a lot of information that you do **not** need for purposes of this assignment.
+
+I highly recommend the `usethis` package, to make a lot of this process easier.
+
+#### Advice
+
+Your package does not need to be ground-breaking or complex; simply creating a few small functions that make people's lives easier is very valueable! 
+
+Your package also does not need to have broad scope.  For example, perhaps you have some data and you find yourself making the same types of plots over and over.  You might consider writing a function that auto-generates a plot, given a few variables of interest.
+
+This is a good project choice if you are excited about the more programming-heavy aspects of **R**.  There will be a lot of extra work involved in documenting your functions and so forth.  (Hence the Flex Points!)
+
+#### Guidelines
+
+You will turn in to me:
+
+* A package folder with, at a minimum:
+    + A `/R/` subfolder
+    + Package metadata (DESCRIPTION)
+    + Function documentation (man/)
+    + Namespaces (NAMESPACE)
+    
+* A short vignette demonstrating the purpose and use of your package.
+
+
+## Flex Points
+
+You **may** turn in two (but no more than two) deliverables for the same project, for extra Flex Points.  Indicate in your project submission comments which deliverable you would like for me to grade.
+
+There are a few other ways to earn additional Flex Points on this assignment. 
+
+Each of these options is worth +20 flex points.  (You may score for each option only once.)
+
+1. Instead of using an existing online dataset, 
+    + collect your data using `rvest` or a similar webscraping package, or
+    + use `dbplyr` or similar to read your data from a database like **mySQL**
+    
+2. As part of your data analysis process, make use of a package that we did not learn in class, such as:
+    + caret	Training classification models
+    + parsnip	Modeling
+    + infer	Inference and hypothesis testing
+    + forecast	Predictive models
+    + randomForest	Classification
+    + zoo	Time series
+    + mlr	Modeling
+    + gbm	Regression modeling
+    + car	ANOVA tables
+    + mgcv	Generalized additive models
+    + lme4 or nlme	Mixed Effect Models
+    + glmnet	Lasso and Elastic Net Regression
+    + survival	Tools for survival analysis
+    + xts	Time Series Data
+    + quantmod	Financial Data
+
+3. As part of your data visualization, make use of a package that we did not learn in class.
+    + gganimate	Animated visualization
+    + Corrplot	Visualization of correlation matrices
+    + rgl	3D visualization
+    + ggvis	interactive graphics
+    + diagrammeR	Diagram visualization
+    + vcd	Visualization of categorical data
+    + qcc	Quality control plotting
+    + igraph	Networks
+    + leaflet	Maps
+

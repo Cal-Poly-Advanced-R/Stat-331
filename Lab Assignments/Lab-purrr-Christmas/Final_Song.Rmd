@@ -1,0 +1,28 @@
+---
+title: "A Beautiful Song"
+author: "YOUR NAME HERE"
+output: html_document
+---
+
+```{r}
+## Do not change this
+knitr::opts_chunk$set(echo=FALSE, warning=FALSE, message=FALSE, error = TRUE)
+```
+
+
+```{r}
+## Change this to be your R script
+source("myscript.R")
+```
+
+
+```{r}
+### DO NOT CHANGE ANYTHING IN THIS CHUNK
+
+xmas2 <- read.csv("https://www.dropbox.com/s/ap2hqssese1ki4j/xmas_2.csv?dl=1")
+
+sing_song(xmas2)
+
+```
+
+

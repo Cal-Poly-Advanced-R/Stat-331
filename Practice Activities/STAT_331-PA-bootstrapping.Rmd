@@ -1,0 +1,75 @@
+---
+title: "Review 2"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+```
+
+## The Cauchy Distribution
+
+The Cauchy distribution is a continuous distribution with possible values from negative infinity to infinity.  It is an unusual distribution, because it does not have a mean!  It does, however, have a median.  We will use simulation and bootstrapping to explore this.
+
+## Instructions
+
+Perform the following steps:
+
+1. Simulate a sample of size 100 from the standard Cauchy distribution.  *(Hint: Remember the `p, q, r, d` functions for simulation!)*
+
+2. Take 1000 bootstrap samples from your simulated sample.  Make a 95% confidence interval for (a) the mean and (b) the median.
+
+```{r, include = TRUE}
+
+c_sam <- rcauchy(100)
+
+csam <- replicate(1000, sample(c_sam, replace = TRUE), simplify = FALSE)
+
+mans <- map_dbl(csam, mean)
+meds <- map_dbl(csam, median)
+
+
+quantile(mans, c(.025, .975))
+quantile(meds, c(.025, .975))
+
+
+```
+
+3. Repeat (1) and (2) ten times.  That is, you should have a NEW simulated Cauchy sample each time.  Save the upper and lower bounds of the mean and median confidence intervals at each step. *(Hint: You may want to write a loop, like the one in my bootstrapping notes!)*
+
+4. Make a plot showing the 10 mean confidence intervals, and another plot showing the 10 median confidence intervals.  (It is your choice what kind of plot to use!)
+
+```{r, include = TRUE}
+
+
+my_CIs <- data.frame()
+
+for(i in 1:10){
+  
+  c_sam <- rcauchy(100)
+  
+  csam <- replicate(1000, sample(c_sam, replace = TRUE), simplify = FALSE)
+  
+  mans <- map_dbl(csam, mean)
+  meds <- map_dbl(csam, median)
+  
+  
+  my_CIs <- rbind(my_CIs, c(quantile(mans, c(.025, .975)), quantile(meds, c(.025, .975))))
+
+}
+
+names(my_CIs) = c("lower_mean", "upper_mean", "lower_med", "upper_med")
+
+ggplot(my_CIs) + geom_errorbarh(aes(xmin = lower_mean, xmax = upper_mean, y = 1:10))
+
+ggplot(my_CIs) + geom_errorbarh(aes(xmin = lower_med, xmax = upper_med, y = 1:10))
+
+```
+
+
+If these steps were done correctly, you should notice that the median confidence intervals were roughly the same at each step, while the mean confidence intervals were all over the place! 
+
+Upload an html file showing **only your final plots** to the assignment on PolyLearn.

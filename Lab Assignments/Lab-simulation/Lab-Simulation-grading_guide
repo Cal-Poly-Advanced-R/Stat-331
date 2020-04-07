@@ -1,0 +1,24 @@
+
+Answers should be given half credit if there is an incorrect but reasonable attempt.
+
+  Part One: 18 points
+    Q1: 2 points
+    Q2: 6 points 
+    Q3: 6 points
+    Q4: 2 points
+    Q5: 2 points; okay if they don't comment on the "divide by n" thing, but take off points if they got 50-ish rather than 9-ish as the sd of the sample means.
+    
+    
+    Part Two: 60 points
+      Q1: 20 points
+        a: 5 points
+        b: 10 points
+        c: 5 points
+      Q2, Q3:  Same as Q1
+      
+      
+    Part Three: 24 points
+      Simulation: 12 points
+        - plots but does not count < 55: -2 points
+      Using pnorm: 10 points
+        - using sd=50: -2 points

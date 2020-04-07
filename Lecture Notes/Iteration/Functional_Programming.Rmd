@@ -1,0 +1,373 @@
+---
+title: "Functional Programming"
+author: "Stat 331"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+class: center, middle, invert
+# Iteration
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+solarized_light()
+```
+
+```{r, include = FALSE}
+library(tidyverse)
+```
+---
+
+# Iteration
+
+- What if you want to do something a whole bunch of times, or to every item in a list?  
+
+```{r}
+print("99 bottles of pop on the wall, 
+      99 bottles of pop.  
+      Take one down, pass it around, 
+      98 bottles of pop on the wall.")
+
+print("98 bottles of pop on the wall, 
+      98 bottles of pop.  
+      Take one down, pass it around, 
+      97 bottles of pop on the wall.")
+
+###.... and so on...
+```
+
+---
+# We could write a function...
+
+```{r}
+sing_about_pop <- function(num) {
+  
+  
+  paste(num,
+    "bottles of pop on the wall,",
+    num,
+    "bottles of pop.",
+    "Take one down, pass it around,",
+    num - 1,
+    "bottles of pop on the wall.")
+  
+}
+```
+
+---
+# We could write a function...
+
+```{r}
+library(glue)
+
+sing_about_pop <- function(num) {
+  
+  
+  glue("{num} bottles of pop on the wall, {num} bottles of pop.
+       Take one down, pass it around, {num - 1} bottles of pop on the wall.")
+  
+}
+```
+
+---
+# This helped!
+
+... but it is still repetitive...
+
+```{r}
+sing_about_pop(99)
+sing_about_pop(98)
+sing_about_pop(97)
+```
+
+---
+# Good: For loops
+
+```{r}
+for (i in 99:95) {
+  
+  sing_about_pop(i)
+
+}
+```
+--
+
+... wait, where did it go?
+
+---
+# Print!
+
+```{r}
+for (i in 99:95) {
+  
+  print(sing_about_pop(i))
+
+}
+```
+
+---
+# Good: For loops
+
+**Pro:**
+
+* Classic programming approach; easy to understand
+
+* Can change values at each loop step.
+
+
+**Con:**
+
+* Slow in R.
+
+* A little messy to read the code
+
+* Not always necessary.
+
+
+---
+# Better: The `apply` functions
+
+```{r}
+
+sapply(99:95, sing_about_pop)
+
+```
+---
+# Better: The `apply` functions
+
+- Pay attention to what type of input they *take* and what type of output they *give*
+
+- `sapply` takes a vector, returns a vector
+
+- `lapply` takes a list, returns a list
+
+- `apply` takes a dataset and a dimension (1 = row, 2 = col), returns a vector or list
+
+---
+# Best:  The `map` functions from `purrr`
+
+
+```{r}
+
+map_chr(99:95, sing_about_pop)
+
+```
+
+---
+# Best:  The `map` functions from `purrr`
+
+- `map` always returns a **list**
+
+- `map_chr` always returns a **character vector**  (or an error)
+
+- What do you think `map_dbl` returns?
+
+---
+
+# What if I want some options in my function?
+
+```{r}
+sing_about_drinks <- function(num, drink) {
+  
+  
+    
+  glue("{num} bottles of {drink} on the wall, {num} bottles of {drink}.
+       Take one down, pass it around, {num - 1} bottles of {drink} on the wall.")
+  
+}
+```
+
+---
+# `sapply` has trouble!
+
+```{r, error = TRUE}
+
+sapply(99:95, sing_about_drinks(drink = "beer"))
+
+```
+---
+
+# You can kind of get around this...
+
+(This is called a **headless function**)
+
+```{r}
+
+sapply(99:95, function(x) sing_about_drinks(x, drink = "beer"))
+
+```
+
+---
+
+# But `map` has a cool shortcut!
+
+- Note the "~" in front of the function - this is important!
+
+- Note the "." before the "x" - this is important!
+
+```{r}
+
+map_chr(99:95, ~sing_about_drinks(.x, "beer"))
+
+```
+
+
+---
+
+# What if I want to use many options?
+
+```{r, echo = FALSE}
+
+data <- data.frame(num = 99:95, drink = c("pop", "beer", "water", "lemonade","milk"))
+
+```
+
+```{r}
+head(data)
+```
+
+---
+# Use `map2`!
+
+```{r}
+map2_chr(data$num, data$drink, ~sing_about_drinks(.x, .y))
+```
+
+---
+# The very best: Vectorized functions
+
+## What does it mean to be vectorized?
+
+```{r}
+add_odds <- function(x,y){
+  
+  if(x %%2 == 1 & y %% 2 == 1){
+    
+    x + y
+    
+  } else {
+    
+   0
+    
+  }
+  
+}
+
+```
+
+---
+
+# What does it mean to be vectorized?
+
+```{r}
+
+add_odds(1,3)
+
+add_odds(2,4)
+
+
+```
+
+---
+
+# What does it mean to be vectorized?
+
+```{r, error = TRUE }
+
+first_nums <- c(1,2)
+next_nums <- c(3,4)
+
+add_odds(first_nums, next_nums)
+
+```
+
+---
+
+# What does it mean to be vectorized?
+
+`add_odds` is not a vectorized function!
+
+```{r, eval = FALSE}
+add_odds <- function(x,y){
+  
+  if(x %%2 == 1 & y %% 2 == 1){
+    
+    x + y
+    
+  } else {
+    
+   0
+    
+  }
+  
+}
+
+```
+
+---
+
+# We can try to make it vectorized...
+ 
+```{r}
+add_odds_2 <- function(x,y){
+  
+  is_odd <- x %% 2 == 1 & y %% 2 == 1
+  
+  answers <- rep(0, length(x))
+  
+  answers <- x + y
+  
+  answers[!is_odd] <- 0
+  
+}
+
+```
+
+---
+# We can try to make it vectorized...
+
+```{r}
+
+first_nums <- c(1,2)
+next_nums <- c(3,4)
+
+add_odds_2(first_nums, next_nums)
+
+```
+
+---
+# But, what if we can't vectorize?
+## Iteration!
+
+```{r}
+
+first_nums <- c(1,2)
+next_nums <- c(3,4)
+
+map2(first_nums, next_nums, ~add_odds(.x, .y))
+
+```
+
+---
+
+## Things to remember
+
+- What does your function take as INPUT?
+
+- What does your function give as OUTPUT?
+
+- How can we write it to be friendly with `apply` or `map`?
+
+- Do you REALLY need to use `apply` or `map`, or is it vectorized?
+
+- Bonus: How can we write it to be friendly with `%>%`?
+
+
+
+
+

@@ -1,0 +1,12 @@
+name: stat_331-pa-base-instructions
+title: STAT_331-PA-base-instructions
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 77
+bundleId: 162
+url: https://rstudio.csm.calpoly.edu/content/77/
+when: 1580758321.59309
+asMultiple: FALSE
+asStatic: TRUE

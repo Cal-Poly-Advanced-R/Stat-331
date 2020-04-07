@@ -1,0 +1,12 @@
+name: lab-purrr-christmas
+title: Lab-purrr-Christmas
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 80
+bundleId: 166
+url: https://rstudio.csm.calpoly.edu/Lab_Functional_Instructions/
+when: 1580924747.24089
+asMultiple: FALSE
+asStatic: TRUE

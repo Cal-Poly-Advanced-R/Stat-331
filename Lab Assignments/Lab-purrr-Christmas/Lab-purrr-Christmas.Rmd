@@ -1,0 +1,244 @@
+---
+title: "Lab 3: The 12 Days of Christmas"
+author: "Stat 331"
+output: rmdformats::readthedown
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = FALSE)
+
+library(tidyverse)
+```
+
+## Setup
+
+The song "12 Days of Christmas", written around 1780, tells the tale of many gifts a person recieves in the days leading up to Christmas. [https://en.wikipedia.org/wiki/The_Twelve_Days_of_Christmas_(song)](https://en.wikipedia.org/wiki/The_Twelve_Days_of_Christmas_(song)) These gifts repeat and compound; on the first day, the narrator recieves
+
+```
+A partridge in a pear tree.
+```
+
+On the last day, he or she recieves
+
+```
+Twelve Drummers Drumming
+Eleven Pipers Piping
+Ten Lords a Leaping
+Nine Ladies Waiting
+Eight Maids a Milking
+Seven Swans a Swimming
+Six Geese a Laying
+Five Golden Rings
+Four Calling Birds
+Three French Hens
+Two Turtle Doves
+And a Partridge in a Pear Tree
+```
+
+Run the code below to load up a dataset called `xmas` that contains the crucial information about these gifts.  Your task will be to write a function that makes R sing the whole song to you, using only this dataset.
+
+```{r}
+
+xmas <- read.csv("https://www.dropbox.com/s/e584pryn8evm1gz/xmas.csv?dl=1")
+```
+
+Throughout this lab, you are asked to write several functions.  You should write these functions in a `.R` script, NOT in a `.Rmd` markdown file.  When you want to test and use the functions, you should use `source("myscript.R")` to load the functions, as we did in PA 7.
+
+If your functions depend on the tidyverse, or other packages, make sure to include appropriate `library` statements at the top of your `.R` script file.
+
+Note that your functions can - and should! - include each other.  That is, don't duplicate code; reference earlier, smaller functions inside your larger functions.
+
+## Step One:  Plurals
+
+Note that the gifts are listed in singular: for example, on day 5 the narrator recieves "5 golden rings", but the entry in the dataset for the gift on day 5 simply says "ring".  Write a function called "pluralize_gift" that takes a gift and returns the appropriate plural. Some code structure is provided for you below.
+
+*Hint 1:* Note that the gifts on days 6 and 9 have unusual pluralizations.
+
+*Hint 2:*  The functions `paste()` and `paste0()` should be useful.  You will also likely want to use some `stringr` functions.*
+
+*Hint 3:*  The following small example may be useful to you:
+
+(`y$` is a special trick, called a regular expression, that says "match the letter y, but only if it is the last letter in the string")
+
+```{r, eval = TRUE}
+my_names <- c("Kimberly", "Trini", "Jason", "Billy", "Zach", "Tommy")
+
+my_names %>% 
+  str_replace("y$", "ies")
+```
+
+
+**Important:**  You should **absolutely not** "hard-code" anything into this function; this function should work in general, not just for the items in the 12 Days of Christmas.  For example, the word "rings" should not appear anywhere in the function.  I should be able to give it any gift and any day, and get back the plural.
+
+```{r}
+
+pluralize_gift <- function(gift){
+  
+  gift <- gift %>%
+    str_replace(...)
+  
+  return(gift)
+  
+} 
+
+```
+
+
+
+Try your function out on the gifts in the dataset.  (Consider: is your function *vectorized*?)
+
+```{r}
+
+pluralize_gift(xmas$Gift.Item)
+
+purrr::map_chr(xmas$Gift.Item, pluralize_gift)
+
+```
+
+
+
+## Step Two: Creating sentences
+
+Write a function called `make_phrase` that takes as input the necessary information, and returns a phrase.  For example, 
+
+`make_phrase(num = 10, item = "lords", verb = "a-leaping", adjective = "", location = "")`
+
+should return
+
+```
+"10 lords a-leaping"
+```
+
+*Hint:*  The following may be useful to you:
+
+```{r, eval = TRUE}
+my_sentence <- "Oh no!     Too   many    spaces!    "
+
+my_sentence %>%
+  str_replace_all("\\s+", " ")
+
+my_other_sentence <- c("1 bird", "11 birds")
+
+my_other_sentence %>%
+  str_replace_all("^1 ", "a ")
+
+```
+
+(What do you think the `^` symbol did?)
+
+*Hint:* Look at the functions `str_replace_na()` and `str_trim` in the `stringr` package.
+
+
+```{r}
+make_phrase <- function(num, item, verb, adjective, location){
+  
+  
+  
+}
+
+
+```
+
+
+Try your function out on the `xmas` data, by making a new variable containing the daily phrases.
+
+```{r}
+xmas <- xmas %>%
+  mutate(
+    Full.Phrase = ...
+  )
+```
+
+
+
+## Step Three:  Iteration.
+
+Write a function called `sing_line` that takes as input:
+
+* A dataset
+
+* A number indicating which day to sing about
+
+* The columns corresponding to the daily phrases.
+
+
+```{r}
+sing_line(xmas, 2, Full.Phrase)
+
+```
+
+should return
+
+```
+On the second day of Christmas, my true love sent to me,
+two turtle doves 
+and a partridge in a pear tree.
+```
+
+*Hint:* This function will need a loop, an `apply` function, or a `map` function inside of it, to iterate over all the gifts that are given on a particular day.
+
+*Hint 2:*  The `{{phrase_col}}` part, which I provided for you, lets you use column names as arguments to a function.  Pretty neat!
+
+```{r}
+sing_line <- function(dataset, line, phrase_col){
+  
+  phrases <- dataset %>% pull({{phrase_col}})
+   
+  
+  
+  
+}
+
+
+```
+
+
+
+
+## Step Four: Sing the song!
+
+Use a function in the `map` or `apply` family to run the `sing_line` function over all 12 days of Xmas.
+
+Note that, if done right, you are *repeating several lines* on each day.
+
+Double check your output with the lyrics in the wikipedia link.
+
+
+## Step Five:  One function to rule them all.
+
+Combine steps 1-4 into one function called `sing_song`.  That is, this function should take as input only the dataset, and return the full song.
+
+For this function - and only this function - you may assume that the names of the variables in your dataset are consistent.  That is, you may use the variable names `Gift.Item`, `Day.in.Words`, etc. in the body of your function.  However, the dataset name `xmas` should not appear in the body of your function.
+
+
+
+Test your function on the following code, which should return the whole "12 Days of Christmas" song:
+
+```{r, echo = TRUE}
+xmas <- read.csv("https://www.dropbox.com/s/e584pryn8evm1gz/xmas.csv?dl=1")
+
+sing_song(xmas)
+```
+
+## Flex Points
+
+For up to 10 flex points, [document your functions thoroughly](https://style.tidyverse.org/documentation.html) using comments.
+
+
+## Turn in your work
+
+**READ THESE INSTRUCTIONS CAREFULLY!**
+
+*There will be a -20% penalty for turning in the wrong files.*
+
+1.  Download the file `Final_Song.Rmd` from Canvas
+
+2.  Change the author name to your own name.
+
+3.  In the second chunk, change the `"myscript.R"` part to successfully `source()` your own script with your singing functions.
+
+4.  Knit `Final_Song.Rmd`
+
+5.  Turn in, to Canvas:  (1) Your **script file** and (2) **Final_Song.html**.
+
+

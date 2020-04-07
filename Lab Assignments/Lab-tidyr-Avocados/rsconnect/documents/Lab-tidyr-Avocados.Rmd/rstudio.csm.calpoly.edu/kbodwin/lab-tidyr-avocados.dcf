@@ -1,0 +1,12 @@
+name: lab-tidyr-avocados
+title: Lab-tidyr-Avocados
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 68
+bundleId: 150
+url: https://rstudio.csm.calpoly.edu/content/68/
+when: 1579579958.84879
+asMultiple: FALSE
+asStatic: TRUE

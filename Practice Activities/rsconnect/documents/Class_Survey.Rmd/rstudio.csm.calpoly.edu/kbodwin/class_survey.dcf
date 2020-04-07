@@ -1,0 +1,12 @@
+name: class_survey
+title: Class_Survey
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 62
+bundleId: 141
+url: https://rstudio.csm.calpoly.edu/content/62/
+when: 1578508796.65841
+asMultiple: FALSE
+asStatic: FALSE

@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Special Data Types</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Stat 331" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Special Data Types
+### Stat 331
+
+---
+
+
+
+
+
+---
+class: center, middle
+# Setup
+
+Find your R Markdown file where you cleaned the dataset `colleges.csv` and rerun your code to create `colleges_clean`.
+
+Alternatively, start a new R Markdown file, and load in the dataset `colleges_clean.csv`, which is posted on Canvas.
+
+
+---
+class: center, middle
+# Factors
+
+&lt;img src="https://ih1.redbubble.net/image.329889705.2507/st%2Csmall%2C215x235-pad%2C210x230%2Cf8f8f8.u1.jpg" width=300&gt;
+
+---
+
+# Factors
+
+Common tasks:
+
+* Turn a `character` or `numeric` into a factor
+
+* Make a factor by "binning" a numeric variable
+
+* Rename or reorder the `levels` of a factor
+
+
+The packages `forcats`  ("for categoricals") gives nice shortcuts for manipulating categorical variables.
+
+
+(`forcats` loads with the `tidyverse`)
+
+---
+# Turn to factor
+
+
+```r
+x &lt;- c("apple", "dog", "banana", "cat", "banana", "Queen Elizabeth", "dog")
+
+x
+```
+
+```
+## [1] "apple"           "dog"             "banana"          "cat"            
+## [5] "banana"          "Queen Elizabeth" "dog"
+```
+
+```r
+x &lt;- factor(x)
+
+x
+```
+
+```
+## [1] apple           dog             banana          cat            
+## [5] banana          Queen Elizabeth dog            
+## Levels: apple banana cat dog Queen Elizabeth
+```
+
+
+---
+# Recoding
+
+
+```r
+x &lt;- fct_recode(x, fruit = "apple", fruit = "banana", pet = "dog", pet ="cat")
+
+x
+```
+
+```
+## [1] fruit           pet             fruit           pet            
+## [5] fruit           Queen Elizabeth pet            
+## Levels: fruit pet Queen Elizabeth
+```
+
+---
+# `case_when()`
+
+A catchall shortcut for making categorical variables is `case_when`.
+
+
+```r
+iris %&gt;%
+  mutate(
+    Flower.Size = case_when(
+      Sepal.Length &lt; 5 ~ "Small",
+      Sepal.Length &gt; 6 ~ "Large",
+      TRUE ~ "Medium"
+    )
+  ) %&gt;%
+    select(Sepal.Length, Flower.Size)
+```
+
+```
+##     Sepal.Length Flower.Size
+## 1            5.1      Medium
+## 2            4.9       Small
+## 3            4.7       Small
+## 4            4.6       Small
+## 5            5.0      Medium
+## 6            5.4      Medium
+## 7            4.6       Small
+## 8            5.0      Medium
+## 9            4.4       Small
+## 10           4.9       Small
+## 11           5.4      Medium
+## 12           4.8       Small
+## 13           4.8       Small
+## 14           4.3       Small
+## 15           5.8      Medium
+## 16           5.7      Medium
+## 17           5.4      Medium
+## 18           5.1      Medium
+## 19           5.7      Medium
+## 20           5.1      Medium
+## 21           5.4      Medium
+## 22           5.1      Medium
+## 23           4.6       Small
+## 24           5.1      Medium
+## 25           4.8       Small
+## 26           5.0      Medium
+## 27           5.0      Medium
+## 28           5.2      Medium
+## 29           5.2      Medium
+## 30           4.7       Small
+## 31           4.8       Small
+## 32           5.4      Medium
+## 33           5.2      Medium
+## 34           5.5      Medium
+## 35           4.9       Small
+## 36           5.0      Medium
+## 37           5.5      Medium
+## 38           4.9       Small
+## 39           4.4       Small
+## 40           5.1      Medium
+## 41           5.0      Medium
+## 42           4.5       Small
+## 43           4.4       Small
+## 44           5.0      Medium
+## 45           5.1      Medium
+## 46           4.8       Small
+## 47           5.1      Medium
+## 48           4.6       Small
+## 49           5.3      Medium
+## 50           5.0      Medium
+## 51           7.0       Large
+## 52           6.4       Large
+## 53           6.9       Large
+## 54           5.5      Medium
+## 55           6.5       Large
+## 56           5.7      Medium
+## 57           6.3       Large
+## 58           4.9       Small
+## 59           6.6       Large
+## 60           5.2      Medium
+## 61           5.0      Medium
+## 62           5.9      Medium
+## 63           6.0      Medium
+## 64           6.1       Large
+## 65           5.6      Medium
+## 66           6.7       Large
+## 67           5.6      Medium
+## 68           5.8      Medium
+## 69           6.2       Large
+## 70           5.6      Medium
+## 71           5.9      Medium
+## 72           6.1       Large
+## 73           6.3       Large
+## 74           6.1       Large
+## 75           6.4       Large
+## 76           6.6       Large
+## 77           6.8       Large
+## 78           6.7       Large
+## 79           6.0      Medium
+## 80           5.7      Medium
+## 81           5.5      Medium
+## 82           5.5      Medium
+## 83           5.8      Medium
+## 84           6.0      Medium
+## 85           5.4      Medium
+## 86           6.0      Medium
+## 87           6.7       Large
+## 88           6.3       Large
+## 89           5.6      Medium
+## 90           5.5      Medium
+## 91           5.5      Medium
+## 92           6.1       Large
+## 93           5.8      Medium
+## 94           5.0      Medium
+## 95           5.6      Medium
+## 96           5.7      Medium
+## 97           5.7      Medium
+## 98           6.2       Large
+## 99           5.1      Medium
+## 100          5.7      Medium
+## 101          6.3       Large
+## 102          5.8      Medium
+## 103          7.1       Large
+## 104          6.3       Large
+## 105          6.5       Large
+## 106          7.6       Large
+## 107          4.9       Small
+## 108          7.3       Large
+## 109          6.7       Large
+## 110          7.2       Large
+## 111          6.5       Large
+## 112          6.4       Large
+## 113          6.8       Large
+## 114          5.7      Medium
+## 115          5.8      Medium
+## 116          6.4       Large
+## 117          6.5       Large
+## 118          7.7       Large
+## 119          7.7       Large
+## 120          6.0      Medium
+## 121          6.9       Large
+## 122          5.6      Medium
+## 123          7.7       Large
+## 124          6.3       Large
+## 125          6.7       Large
+## 126          7.2       Large
+## 127          6.2       Large
+## 128          6.1       Large
+## 129          6.4       Large
+## 130          7.2       Large
+## 131          7.4       Large
+## 132          7.9       Large
+## 133          6.4       Large
+## 134          6.3       Large
+## 135          6.1       Large
+## 136          7.7       Large
+## 137          6.3       Large
+## 138          6.4       Large
+## 139          6.0      Medium
+## 140          6.9       Large
+## 141          6.7       Large
+## 142          6.9       Large
+## 143          5.8      Medium
+## 144          6.8       Large
+## 145          6.7       Large
+## 146          6.7       Large
+## 147          6.3       Large
+## 148          6.5       Large
+## 149          6.2       Large
+## 150          5.9      Medium
+```
+
+---
+# Try the following.  What did it do?
+
+
+```r
+colleges_clean &lt;- 
+  colleges_clean %&gt;%
+  mutate(
+    CONTROL = factor(CONTROL),
+    Type = fct_recode(CONTROL, Public = "1", Private = "2")
+  )
+```
+
+---
+# Forcats
+
+We will not practice every single function in the `forcats` package.
+
+Find the `forcats` "cheatsheet" at https://resources.rstudio.com/rstudio-developed/factors
+
+Use it to answer the following (in the Google doc!):
+
+* What is the difference between `fct_relevel()` and `fct_recode()`?
+
+* What is the difference between `fct_collapse()` and `fct_lump()`?
+
+* What is the difference between `fct_reorder()` and `fct_inorder()`?
+
+*Hint: Make up a couple of factors, and see what happens when you use these functions on them.*
+
+---
+class: center, middle
+
+# YOUR TURN
+
+## Adjust the `REGION` variable to be nicer.
+
+
+---
+class: center, middle
+# Strings
+
+&lt;img src="https://stringr.tidyverse.org/logo.png" width=300&gt;
+
+---
+
+# Strings
+
+A **string** is a bunch of **characters**.
+
+Don't confuse a **string** (many characters, one object) with a **character vector** (vector of strings)
+
+
+
+```r
+my_string &lt;- "Hi, my name is Kelly!"
+
+my_vector &lt;- c("Hi", "my", "name", "is", "Kelly")
+
+my_string
+```
+
+```
+## [1] "Hi, my name is Kelly!"
+```
+
+```r
+my_vector
+```
+
+```
+## [1] "Hi"    "my"    "name"  "is"    "Kelly"
+```
+
+---
+# Strings
+
+Common tasks:
+
+* Find which strings contain a particular pattern
+
+* Remove or replace a pattern
+
+* Edit a string (for example, make it lowercase)
+
+
+The packages `stringr` is very useful for strings!
+
+(`stringr` loads with the `tidyverse`)
+
+---
+
+# Find patterns
+
+
+```r
+my_vector &lt;- c("Hi there", "my name is", "Kelly Bodwin")
+
+str_detect(my_vector, "Kelly")
+```
+
+```
+## [1] FALSE FALSE  TRUE
+```
+
+```r
+str_locate(my_vector, "Kelly")
+```
+
+```
+##      start end
+## [1,]    NA  NA
+## [2,]    NA  NA
+## [3,]     1   5
+```
+
+```r
+str_extract(my_vector, "Kelly")
+```
+
+```
+## [1] NA      NA      "Kelly"
+```
+
+```r
+str_subset(my_vector, "Kelly")
+```
+
+```
+## [1] "Kelly Bodwin"
+```
+
+---
+
+# Replace/Remove patterns
+
+
+
+```r
+my_vector &lt;- c("Hi there", "my name is", "Kelly Bodwin")
+
+str_remove(my_vector, "Kelly")
+```
+
+```
+## [1] "Hi there"   "my name is" " Bodwin"
+```
+
+```r
+str_replace(my_vector, "Kelly", replacement = "George")
+```
+
+```
+## [1] "Hi there"      "my name is"    "George Bodwin"
+```
+
+---
+
+# Make edits
+
+
+```r
+my_string &lt;- "Hi, my name is Kelly!"
+
+str_to_lower(my_string)
+```
+
+```
+## [1] "hi, my name is kelly!"
+```
+
+```r
+str_to_upper(my_string)
+```
+
+```
+## [1] "HI, MY NAME IS KELLY!"
+```
+
+---
+# Your Turn
+
+Using your `colleges_clean` dataset... 
+
+* How exactly does Cal Poly's name appear in this dataset?
+
+* **(hard!)** How many colleges have the word "University" in their name?
+
+* **(harder!)** What is Harvard's out of state tuition?
+
+
+Hint:  Remember that the `str_*` functions need the first argument to be a **vector of strings**, not a **dataset**.  You might want to use them *inside* functions like `filter` or `mutate`
+
+
+
+
+
+
+
+
+
+
+---
+# More stringr
+
+Refer to the `stringr` cheatsheet:  https://stringr.tidyverse.org/
+
+* What is the difference between `str_detect()` and `str_match()`?
+
+* What is the difference between `length()` and `str_length()`?
+
+* What is the difference between `str_replace()` and `str_replace_all()`?
+
+---
+class: center, middle
+# Dates
+
+&lt;img src="https://pbs.twimg.com/media/CQ6A-NdWwAAncW-.png" width=300&gt;
+
+---
+
+# Dates
+
+Common tasks:
+
+* Convert a date-like variable ("April 2, 1989") to a special DateTime Object.
+
+* Find the weekday, month, year, etc from a DateTime object
+
+* Convert between timezones
+
+--
+
+The package `lubridate` is **AMAZING** for this. 
+
+If you work with dates often, please explore the functions - we are happy to help you after the workshop!
+
+
+(`lubridate` does **NOT** load with the `tidyverse`)
+
+---
+# lubridate
+
+Reference the `lubridate` cheatsheet: https://evoldyn.gitlab.io/evomics-2018/ref-sheets/R_lubridate.pdf
+
+Answer the following using code (even if you know the answer already).
+
+1. Save your birthday as a Datetime object in R.  
+
+
+
+
+2. What day of the week does/did your birthday fall on in 2020?
+
+
+
+3. On what day of the week should you plan your 100th birthday party?
+
+
+
+4. Find the date that is exactly 9 months before your birthday.  If it falls on a holiday, think about the implications.
+
+
+
+---
+# Zodiac
+
+The dataset `zodiac.csv ` on Canvas gives the date ranges for the 12 Zodiac signs.  By making appropriate adjustments and calculations, find your Zodiac sign.
+
+
+
+---
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

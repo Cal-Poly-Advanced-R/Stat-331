@@ -1,0 +1,12 @@
+name: final_exam_details
+title: Final Exam Details
+username: kbodwin
+account: kbodwin
+server: rstudio.csm.calpoly.edu
+hostUrl: https://rstudio.csm.calpoly.edu/__api__
+appId: 96
+bundleId: 195
+url: https://rstudio.csm.calpoly.edu/content/96/
+when: 1583802718.76473
+asMultiple: FALSE
+asStatic: TRUE

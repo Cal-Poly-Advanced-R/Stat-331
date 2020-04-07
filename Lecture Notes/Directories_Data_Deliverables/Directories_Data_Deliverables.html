@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>Directories, Data, and Deliverables (oh my!)</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Stat 331" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Directories, Data, and Deliverables (oh my!)
+### Stat 331
+
+---
+
+
+
+
+
+
+## Principles of Reproducibility
+
+The idea:  You should be able to send your project to someone else, and they can jump in and start working right away.
+
+1. Files are organized and well-named.
+
+2. References to data and code work for everyone.
+
+3. Package dependency is clear.
+
+4. Code will run the same every time, even if data values change.
+
+5. Analysis process is well-explained and easy to read.
+
+
+
+---
+# Dealing with Directories
+
+## What is a directory?
+
+- A **directory** is just a fancy name for a folder.
+
+- Your **working directory** is the folder that R "thinks" it lives in at the moment.
+
+
+```r
+getwd()
+```
+
+```
+## [1] "C:/Users/kbodwin/Dropbox/Teaching/STAT-331/Lecture Notes/Directories_Data_Deliverables"
+```
+
+- If you save things you have created, they save to your working directory by default.
+
+---
+class: center, middle
+
+# Manage your Stat 331 Directory
+
+--
+
+Is it in a place you can easily find it?
+
+--
+
+Does it have an informative name?
+
+--
+
+Are the files inside it well-organized?
+
+---
+
+## Paths
+
+- A **path** describes where a certain file or directory lives.
+
+```r
+getwd()
+```
+
+```
+## [1] "C:/Users/kbodwin/Dropbox/Teaching/STAT-331/Lecture Notes/Directories_Data_Deliverables"
+```
+This file lives on my computer `C:/`, 
+
+on my account `Users/kbodwin/` 
+
+in my Dropbox `Dropbox/` 
+
+in a folder called "Lecture Notes" within a folder called "STAT-331" within a folder called "Teaching" `Teaching/STAT-331/`.
+
+---
+class: center, middle
+
+# Try it!
+
+Find the **path** to your Stat 331 directory.
+
+
+---
+
+## The beauty of R Projects
+
+An **R Project** is basically a "flag" planted in a certain directory.
+
+When you double click a **.Rproj** file, it does two things:
+
+1. Open RStudio
+
+2. Set the working directory to be wherever the .Rproj file lives.
+
+3. Link to GitHub, if setup (more on that soon!)
+
+--
+This is great for reproducibility!  
+
+Anyone can copy your directory, and the .Rproj will open properly on their computer.
+
+---
+class: center, middle
+
+# Set up your RProj
+
+In RStudio, choose `File &gt; New Project`.
+
+(Save any files you need to.)
+
+Choose **existing directory** and find your Stat 331 folder.
+
+--
+
+Close **all** of your RStudio windows.
+
+Go to your Stat 331 folder.
+
+Double click the **.Rproj** file (it looks like a cube!)
+
+--
+
+**You should ALWAYS access your work this way from now on!**
+
+---
+
+## Good practice
+
+- Organize your folders carefully, and name them meaningfully:  
+    + `/User/kbodwin/Dropbox/Teaching/331/` rather than `Desktop/stuff/`
+    
+- Use **R Projects** liberally - put one in the "main" folder for each project
+
+    + I have a `STAT331.Rproj` in my `STAT-331` folder.
+    
+- Reference things by path and paste to file names:
+
+    + Future users only need to change their own path once.
+
+
+```r
+my_path &lt;- "/User/kbodwin/Dropbox/Teaching/STAT-331/Data/"
+
+ages &lt;- read.csv(paste0(my_path, "ages.csv"))
+
+hiphop &lt;- read.csv(paste0(my_path, "hiphop.csv"))
+```
+
+---
+# Bad practice
+
+If you put something like this at the top of your .Rmd file, I will set your computer on fire:
+
+
+```r
+setwd("/User/kbodwin/Dropbox/Teaching/331/Data/")
+```
+
+- Setting working directory by hand = BAD!  
+
+--
+
+- That directory is specific to you!  Where should someone else look for the data?
+
+--
+
+- Markdown files won't knit this code.
+
+---
+
+# Dealing with packages
+
+## install.packages()
+
+To use a package, it must first be *installed* to your copy of RStudio.
+
+This only needs to happen **ONCE** per computer or server.
+
+
+```r
+install.packages("tidyverse")
+```
+
+--
+
+## update.packages()
+
+If a computer you are using has the package, but you aren't sure if it's up to date:
+
+
+```r
+update.packages("tidyverse")
+```
+
+to install the most recent version.
+
+---
+class: center,middle
+# NEVER EVER EVER EVER PUT "install.packages" or "update.packages" INTO YOUR MARKDOWN FILE!!!!!
+
+---
+
+# library() and require()
+
+- A package must only be *installed* once.
+
+- But it must be *loaded* every time, to tell R it is needed for this analysis.
+
+- `library` gives an **error** if the package isn't installed
+
+- `require` gives a `TRUE/FALSE` value depending on if the package was available
+
+- For now, you should always use `library`
+
+
+```r
+library(tidyverse)
+
+# notice:  no quotes around package name
+```
+
+---
+
+# Three annoying complications of packages
+
+## Versions
+
+- From time to time, packages get updated
+
+- This is good!
+
+- But, it can mess with your code, which depended on the older version.
+
+- Outside the scope of this class; just be aware.
+
+
+---
+
+# Three annoying complications of packages
+
+## Dependencies
+
+- A *dependency* is when one package makes use of another.
+
+- For example, if you create a package that uses the function `group_by()`, your package **depends** on `dplyr`
+
+- Typically these get loaded automatically!
+
+- Occasionally, something goes weird and you need to manually install the dependency.
+
+
+---
+
+# Three annoying complications of packages
+
+
+## Conflicts
+
+- Sometimes, packages choose the same name for their functions.  This is called a *conflict*.
+
+- The version loaded first takes precedence.  For example...
+
+
+```r
+dat &lt;- data.frame(bob = 1:10, joe = 11:20)
+
+library(MASS)
+library(dplyr)
+```
+
+
+```r
+dat %&gt;% select(bob)
+```
+
+```
+## Error in select(., bob): unused argument (bob)
+```
+
+---
+## Conflicts
+
+
+
+
+```r
+dat &lt;- data.frame(bob = 1:10, joe = 11:20)
+
+library(dplyr)
+library(MASS)
+```
+
+
+```r
+dat %&gt;% select(bob)
+```
+
+```
+## Error in select(., bob): unused argument (bob)
+```
+
+---
+
+## Conflicts
+
+But this is super annoying, because...
+
+
+
+
+```r
+dat &lt;- data.frame(bob = 1:10, joe = 11:20)
+
+library(dplyr)  # dplyr loaded here
+library(MASS)
+library(dplyr)  # does nothing, because it sees we already have dplyr
+```
+
+
+```r
+dat %&gt;% select(bob)
+```
+
+```
+## Error in select(., bob): could not find function "select"
+```
+
+---
+
+# Conflicts
+
+ARG!
+
+Best solution:  Be explicit about your intended package using `::`.
+
+
+```r
+dat &lt;- data.frame(bob = 1:10, joe = 11:20)
+
+library(dplyr) 
+library(MASS)
+
+dat %&gt;% dplyr::select(bob)
+```
+
+--
+
+Another solution: The `conflicted` package
+
+
+```r
+library(conflicted)
+
+conflict_prefer("select", "dplyr")
+```
+
+```
+## [conflicted] Will prefer dplyr::select over any other package
+```
+
+
+---
+class: center, middle, invert
+
+# Reading in data
+
+---
+
+# Common types of data files
+
+- `.csv` :  "Comma-separated"
+```
+Name, Age
+Bob, 49
+Joe, 40
+```
+- `.txt`:  Plain text
+    + Could be just text
+    + Could be comma-separated data
+    + Could be tab-separated, bar-separated, etc.
+    + Need to let R know what to look for
+
+- `.xls, .xlsx`:  Microsoft Excel Spreadsheet
+    + Common approach: save as `.csv`
+    + Nicer approach:  `readxl` package
+
+---
+# read.csv() and read.table()
+
+- The most common way to read data is with `read.csv()`.
+
+- You may supply either a **url** to the dataset, or a **path**.
+
+
+```r
+hiphop &lt;- read.csv("https://www.dropbox.com/s/1qqyshx5ikt9zoc/hiphop.csv?dl=1")
+## This will work for everyone!
+
+hiphop &lt;- read.csv("/Users/kellybodwin/Dropbox/Teaching/STAT-331/Data/hiphop.csv")
+## This will work only on my computer
+
+hiphop &lt;- read.csv("hiphop.csv")
+## This will work if the file is in the same directory as the code (i.e., the project directory)
+
+hiphop &lt;- read.csv("./Data/hiphop.csv")
+## This will work if a folder called "Data" is in the same directory as the code.
+```
+
+---
+# read.csv() and read.table()
+
+- A more general version of `read.csv()` is `read.table()`.
+
+- Tell R what symbol separates data observations with `sep = `
+
+
+```r
+hiphop &lt;- read.table("hiphop.csv", sep = ",")
+hiphop &lt;- read.table("hiphop.csv", sep = "\t")  
+## if tabs between data
+```
+
+---
+# readr
+
+The tidyverse has some cleaned-up versions in the `readr` and `readxl` packages: 
+
+- `read_csv` works like `read.csv`, with some extra stuff
+
+- `read_tsv` is for tab-separated data
+
+- `read_table` is for any data with "columns" (white space separating)
+
+- `read_delim` is for special "delimiters" separating data
+
+- `read_excel` is specifically for dealing with Excel files
+
+---
+# Exercises
+
+The folder "Age_Datasets" on Canvas several datasets containing the names and ages of five men.  The datasets are stored as different file types.  Save these in a reasonable place, then do the following:
+
+1. Read in the dataset `ages.csv`.
+2. Read in the dataset `ages_tab.txt`
+3. Read in the dataset `ages_mystery.txt`
+4. Read in the dataset `ages.xlsx`
+5. Both `read.csv` and `read.table` have an optional argument called `stringsAsFactors`.  Figure out what this does.
+6. Find a way to use `read_csv` to read `ages.csv` with the variable "Name" as a factor and "Age" as a character.
+
+---
+class: center, middle, invert
+# Deliverables in R Markdown
+
+---
+# General principles
+
+- Give your file a good title, author, and date
+
+- Name your file something meaningful (match the title!)
+
+- Use `#` to make section headings etc.
+
+- Each code chunk is a unified thought.
+
+- Text before and after each code chunk to motivate your code and explain the output.
+
+- Make deliberate decisions about what to display:
+    + Does the reader need to see data loading step?
+    + Does the reader need to see your code?
+    + Does the reader need to see the output?
+
+
+---    
+# Naming code chunks
+
+- Lets you jump between chunks
+
+- Careful with copy-pasting, duplicate names are not allowed.
+
+(demo)
+
+---
+# Setting chunk options
+
+- `echo`: Should this code be **shown** (echoed)?
+
+- `eval`: Should this code be **run** (evaluated)?
+
+- `include`: Should this code be neither shown nor run?
+
+- `error`: If there is an error, should that display rather than breaking the knit?
+
+- `warning`: If there is a warning, should that display?
+
+- `message`: If there is a message, should that display?
+
+---
+## Setting options for ALL chunks
+
+What does this do?
+
+
+```r
+knitr::opts_chunk$set(fig.width=6, fig.height=4,
+                      echo=TRUE, warning=FALSE, 
+                      message=FALSE, eval=TRUE)
+```
+
+
+- (you can always override these for individual chunks)
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

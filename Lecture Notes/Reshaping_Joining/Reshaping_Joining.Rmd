@@ -1,0 +1,240 @@
+---
+title: "Reshaping and Joining"
+author: "Stat 331"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: xaringan-themer.css
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE)
+library(tidyverse)
+library(flair)
+```
+
+```{r xaringan-themer, include=FALSE}
+library(xaringanthemer)
+solarized_light()
+```
+
+class: center, middle
+# Setup
+
+Find your R Markdown file in which you explored the `cereals` data.
+
+(This was probably called `Practice.Rmd`.)
+---
+class:center,middle,invert
+# Reshaping
+---
+# Reshaping
+
+* Note that the `cereals` dataset has separate columns for each nutritional item (`calories`, `sugar`, etc.)
+
+* What if we want to make a plot comparing some of these measures?
+
+```{r, eval = FALSE}
+ggplot(cereals, aes(x = ...????))
+
+```
+---
+# Tidy Data
+
+![](https://d33wubrfki0l68.cloudfront.net/6f1ddb544fc5c69a2478e444ab8112fb0eea23f8/91adc/images/tidy-1.png)
+---
+
+# Pivoting longer
+
+What if we want to make boxplots comparing the different iris parts?
+
+
+```{r, error = TRUE}
+ggplot(iris, aes(x = Flower.Part, y = Size)) +
+  geom_boxplot()
+
+```
+
+---
+
+# Pivoting longer
+
+What if we want to make boxplots comparing the different iris parts?
+
+
+```{r}
+head(iris)
+```
+
+---
+# Pivoting longer
+
+```{r}
+
+iris %>%
+  pivot_longer(Sepal.Length:Petal.Width, 
+               names_to = "Flower.Part", 
+               values_to = "Size")
+
+```
+
+---
+# Pivoting longer
+
+```{r}
+
+iris %>%
+  pivot_longer(Sepal.Length:Petal.Width, 
+               names_to = "Flower.Part", 
+               values_to = "Size") %>%
+  ggplot(aes(x = Flower.Part, y = Size)) +
+  geom_boxplot()
+  
+
+```
+
+
+---
+class: middle
+# Alert:
+## `pivot_longer()` is a new function name!
+## It used to be called `gather()`
+## `gather()` will still work, but I suggest you run `update.packages("tidyr")`
+---
+# Try it!
+
+Create a new dataset called `cereals_3`, that has three columns:
+* The name of the cereal
+* A column called "Nutrient" with values `protein`, `fat`, or `fiber`.
+* A column called "Amount" with the corresponding amount of the nutrient.
+
+---
+# Pivoting wider
+
+What about the reverse reshaping?
+
+```{r, echo = FALSE}
+iris %>%
+  pivot_wider(names_from = Species, 
+              values_from = Sepal.Width)
+
+```
+---
+# Pivoting wider
+
+Need IDs to pivot wide!
+
+```{r, echo = FALSE}
+iris %>%
+  mutate(Flower.ID = 1:150) %>%
+  pivot_wider(names_from = Species, 
+              values_from = Sepal.Width,
+              id_cols = Flower.ID)
+
+```
+---
+# Try it!
+
+Cereals in this dataset are placed on shelf 1, 2, or 3.  We would like to know if these cereal placements correspond to different nutritional values.
+
+Create a new dataset called `cereals_4`, that has four columns:
+* The name of the manufacturer
+* The mean amount of sugar in cereals on shelf 1.
+* The mean amount of sugar in cereals on shelf 2.
+* The mean amount of sugar in cereals on shelf 3.
+
+*Hint: You will need to `group_by` and `summarize` first!`
+
+---
+class: center, middle
+# Joining data
+---
+# Joins
+
+Consider the following three datasets:
+
+```{r}
+data1 <- data.frame(
+  professor = c("Bodwin", "Glanz", "Carlton", "Sun"),
+  undergrad_school = c("Harvard", "Cal Poly", "Cal Poly", "Harvard"),
+  grad_school = c("UNC", "Boston University", "UCLA", "Stanford")
+)
+
+data2 <- data.frame(
+  professor = c("Bodwin", "Glanz", "Carlton"),
+  Stat_331 = c(TRUE, TRUE, TRUE),
+  Stat_330 = c(FALSE, TRUE, TRUE),
+  Stat_431 = c(TRUE, TRUE, FALSE)
+)
+
+data3 <- data.frame(
+  course = c("Stat_331", "Stat_330", "Stat_431"),
+  num_sections = c(8, 3, 1)
+)
+
+```
+
+---
+# Joining
+
+```{r}
+data1
+
+data2
+
+data3
+```
+
+---
+# Joining
+
+Combine datasets 1 and 2 to make this:
+
+```{r, echo = FALSE}
+data1 %>% full_join(data2)
+
+
+```
+
+---
+# Joining
+
+Combine datasets 1 and 2 to make this:
+
+```{r, echo = FALSE}
+data1 %>% right_join(data2)
+
+
+```
+---
+# Joining
+
+Combine datasets 2 and 3 to make this:
+
+```{r, echo = FALSE}
+data2 %>%
+  pivot_longer(Stat_331:Stat_431, 
+               names_to = "course",
+               values_to = "can_teach") %>%
+  full_join(data3)
+```
+
+---
+# Joining
+
+We would like to assign teachers for next year, with the following guidelines:
+
+1. Each professor should be given 4 sections.
+
+2. At least half of all 331 sections should be taught by Cal Poly graduates.
+
+3. More than half of all 330 sections should be taught by UCLA graduates.
+
+4. Each professor should teach at least 2 different classes.
+
+**PA 4: How many sections of Stat 331 will Dr. Glanz teach?**
+---
